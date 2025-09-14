@@ -13,7 +13,7 @@ import image8 from "@/assets/imagesCarousel/FKP03935.webp";
 import image9 from "@/assets/imagesCarousel/0FK_1526.webp";
 import image10 from "@/assets/imagesCarousel/0FK_0696.webp";
 
-const PortfolioMasonryTile = ({
+const LiveFeedMasonryTile = ({
   item,
   index,
   onOpen,
@@ -106,11 +106,22 @@ const PortfolioMasonryTile = ({
         </div>
       )}
 
-      {/* Category badge */}
+      {/* Live Feed Badge */}
       {loaded && item.coverUrl && (
         <div className="absolute top-4 left-4 z-10">
-          <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+          <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
             {item.category}
+          </div>
+        </div>
+      )}
+
+      {/* Video Play Icon Overlay */}
+      {loaded && item.coverUrl && (
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="w-16 h-16 bg-red-600/90 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
           </div>
         </div>
       )}
@@ -128,15 +139,15 @@ const PortfolioMasonryTile = ({
   );
 };
 
-export const Portfolio = () => {
+export const LiveFeedPortfolio = () => {
   
-  // Static portfolio data - no backend needed
-  const staticPortfolioData = [
+  // Static live feed portfolio data
+  const staticLiveFeedData = [
     {
       id: "1",
       title: "Tech Conference Live Stream",
       description: "Multi-camera setup for 1,000+ attendees with real-time streaming and interactive Q&A sessions.",
-      category: "Livefeed",
+      category: "Live Stream",
       coverUrl: image10, // 0FK_0696.webp
       photos: [
         image10, // 0FK_0696.webp
@@ -146,45 +157,9 @@ export const Portfolio = () => {
     },
     {
       id: "2",
-      title: "Corporate Headshot Session",
-      description: "Professional headshots for 50+ executives in a single day, maintaining consistent quality across all team members.",
-      category: "Corporate",
-      coverUrl: image2, // AIN00523.webp
-      photos: [
-        image2, // AIN00523.webp
-        image3, // AIN00718.webp
-        image5  // DSC_3411.webp
-      ]
-    },
-    {
-      id: "3",
-      title: "Wedding Live Coverage",
-      description: "Complete ceremony and reception with cinematic highlights, capturing every precious moment of the special day.",
-      category: "Weddings",
-      coverUrl: image6, // FKP03731.webp
-      photos: [
-        image6, // FKP03731.webp
-        image7, // FKP03833.webp
-        image8  // FKP03935.webp
-      ]
-    },
-    {
-      id: "4",
-      title: "Product Launch Event",
-      description: "High-end product photography and live streaming for brand launch, reaching global audience in real-time.",
-      category: "Events",
-      coverUrl: image3, // AIN00718.webp
-      photos: [
-        image3, // AIN00718.webp
-        image9, // 0FK_1526.webp
-        image2  // AIN00523.webp
-      ]
-    },
-    {
-      id: "5",
       title: "Corporate Training Session",
       description: "Multi-location training session with interactive Q&A, ensuring seamless knowledge transfer across teams.",
-      category: "Livefeed",
+      category: "Live Stream",
       coverUrl: image5, // DSC_3411.webp
       photos: [
         image5, // DSC_3411.webp
@@ -193,10 +168,22 @@ export const Portfolio = () => {
       ]
     },
     {
-      id: "6",
+      id: "3",
+      title: "Product Launch Event",
+      description: "High-end product photography and live streaming for brand launch, reaching global audience in real-time.",
+      category: "Live Stream",
+      coverUrl: image3, // AIN00718.webp
+      photos: [
+        image3, // AIN00718.webp
+        image9, // 0FK_1526.webp
+        image2  // AIN00523.webp
+      ]
+    },
+    {
+      id: "4",
       title: "Award Ceremony Coverage",
       description: "Red carpet photography and live award ceremony streaming, capturing the glamour and excitement of the event.",
-      category: "Events",
+      category: "Live Stream",
       coverUrl: image7, // FKP03833.webp
       photos: [
         image7, // FKP03833.webp
@@ -204,12 +191,35 @@ export const Portfolio = () => {
         image3  // AIN00718.webp
       ]
     },
-
     {
-      id: "8",
-      title: "Team Building Event",
-      description: "Dynamic coverage of corporate team building activities, showcasing company culture and employee engagement.",
-      category: "Corporate",
+      id: "5",
+      title: "Wedding Live Coverage",
+      description: "Complete ceremony and reception with cinematic highlights, capturing every precious moment of the special day.",
+      category: "Live Stream",
+      coverUrl: image6, // FKP03731.webp
+      photos: [
+        image6, // FKP03731.webp
+        image7, // FKP03833.webp
+        image8  // FKP03935.webp
+      ]
+    },
+    {
+      id: "6",
+      title: "Corporate Webinar Series",
+      description: "Professional webinar production with multi-camera setup, graphics overlay, and real-time audience interaction.",
+      category: "Live Stream",
+      coverUrl: image2, // AIN00523.webp
+      photos: [
+        image2, // AIN00523.webp
+        image3, // AIN00718.webp
+        image5  // DSC_3411.webp
+      ]
+    },
+    {
+      id: "7",
+      title: "Virtual Conference Platform",
+      description: "Complete virtual conference setup with live streaming, breakout rooms, and interactive features for 500+ participants.",
+      category: "Live Stream",
       coverUrl: image9, // 0FK_1526.webp
       photos: [
         image9, // 0FK_1526.webp
@@ -218,23 +228,10 @@ export const Portfolio = () => {
       ]
     },
     {
-      id: "9",
-      title: "Intimate Wedding Ceremony",
-      description: "Breathtaking coverage of intimate wedding ceremonies, focusing on emotional moments and personal touches.",
-      category: "Weddings",
-      coverUrl: image2, // AIN00523.webp
-      photos: [
-        image2, // AIN00523.webp
-        image7, // FKP03833.webp
-        image10 // 0FK_0696.webp
-      ]
-    },
-
-    {
-      id: "11",
-      title: "Corporate Event Photography",
-      description: "Comprehensive coverage of corporate events, conferences, and business meetings with professional documentation.",
-      category: "Corporate",
+      id: "8",
+      title: "Live Music Event Streaming",
+      description: "High-quality live streaming of music events with professional audio mixing and multi-angle camera coverage.",
+      category: "Live Stream",
       coverUrl: image1, // 20191208-LAN_0281.webp
       photos: [
         image1, // 20191208-LAN_0281.webp
@@ -246,7 +243,7 @@ export const Portfolio = () => {
 
   const items = useMemo(
     () => {
-      return staticPortfolioData.map((i: any) => ({
+      return staticLiveFeedData.map((i: any) => ({
         id: i.id,
         title: i.title,
         description: i.description,
@@ -289,10 +286,10 @@ export const Portfolio = () => {
       <section className="bg-gray-800 py-20 px-6">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Our Portfolio
+            Live Feed Portfolio
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Showcasing our expertise in livestreaming, event coverage, and professional photography
+            Showcasing our expertise in professional live streaming and real-time event coverage
           </p>
         </div>
       </section>
@@ -309,7 +306,7 @@ export const Portfolio = () => {
             }}
           >
             {items.map((item, index) => (
-              <PortfolioMasonryTile
+              <LiveFeedMasonryTile
                 key={item.id}
                 item={item}
                 index={index}

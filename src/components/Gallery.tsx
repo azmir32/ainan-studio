@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Play, Camera, Zap, Eye, Heart, ArrowRight, ArrowLeft } from "lucide-react";
 import { ToPortfolioButton } from "@/components/ui/to-portfolio-button";
@@ -18,32 +18,29 @@ import image10 from "@/assets/imagesCarousel/0FK_0696.webp";
 export interface GalleryItem {
   title: string;
   description: string;
-  badge: string;
-  Icon: any;
   imageUrl?: string;
 }
 
-const CreativeGalleryTile = ({
+const MasonryTile = ({
   work,
   index,
-  layoutType,
   onOpen,
 }: {
   work: GalleryItem;
   index: number;
-  layoutType: "hero" | "tall" | "wide" | "square";
   onOpen: () => void;
 }) => {
-  const IconComponent = work.Icon as any;
   const [loaded, setLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [imageDimensions, setImageDimensions] = useState<{width: number, height: number} | null>(null);
   const tileRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setTimeout(() => setIsVisible(true), index * 120);
+          setTimeout(() => setIsVisible(true), index * 100);
         }
       },
       { threshold: 0.1 }
@@ -52,25 +49,33 @@ const CreativeGalleryTile = ({
     return () => observer.disconnect();
   }, [index]);
 
-  const getLayoutClasses = () => {
-    switch (layoutType) {
-      case "hero":
-        return "md:col-span-2";
-      case "tall":
-        return "";
-      case "wide":
-        return "md:col-span-2";
-      default:
-        return "";
+  const handleImageLoad = () => {
+    setLoaded(true);
+    if (imgRef.current) {
+      const { naturalWidth, naturalHeight } = imgRef.current;
+      setImageDimensions({ width: naturalWidth, height: naturalHeight });
     }
   };
 
-  const getAspectRatio = () => 3 / 2; // normalize all tiles to 3:2 for a coherent grid
+  // Calculate responsive image sizes based on container width
+  const getResponsiveSrcSet = () => {
+    if (!work.imageUrl) return '';
+    
+    // For masonry, we want images that match the rendered size
+    // Base sizes: 300px for mobile, 400px for tablet, 500px for desktop
+    const sizes = [300, 400, 500, 600, 800];
+    return sizes.map(size => `${work.imageUrl}?w=${size} ${size}w`).join(', ');
+  };
+
+  const getSizes = () => {
+    // Responsive sizes that match our masonry column widths
+    return '(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, (max-width: 1280px) 25vw, 300px';
+  };
 
   return (
     <div
       ref={tileRef}
-      className={`group relative overflow-hidden bg-black/5 backdrop-blur-sm border border-white/10 transition-all duration-700 ease-out transform-gpu hover:scale-[1.02] hover:z-10 ${getLayoutClasses()}`}
+      className="group relative overflow-hidden bg-black/5 backdrop-blur-sm border border-white/10 transition-all duration-700 ease-out transform-gpu hover:scale-[1.02] hover:z-10 break-inside-avoid mb-6"
       style={{
         borderRadius: index % 3 === 0 ? "2rem 0.5rem 2rem 0.5rem" : index % 2 === 0 ? "0.5rem 2rem 0.5rem 2rem" : "1rem",
         transform: isVisible ? "translateY(0)" : "translateY(2rem)",
@@ -79,91 +84,91 @@ const CreativeGalleryTile = ({
         transitionDelay: `${index * 100}ms`,
       }}
     >
-      <div className="relative overflow-hidden" style={{ aspectRatio: `${getAspectRatio()}` }}>
-        {work.imageUrl ? (
-          <button type="button" className="absolute inset-0 group" onClick={onOpen} aria-label={`Open ${work.title}`}>
-            {!loaded && (
-              <div className="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
-              </div>
-            )}
-            <img
-              src={work.imageUrl}
-              srcSet={`${work.imageUrl}?w=640 640w, ${work.imageUrl}?w=768 768w, ${work.imageUrl}?w=1024 1024w`}
-              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 400px"
-              alt={work.title}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1 will-change-transform"
-              style={{ 
-                opacity: loaded ? 1 : 0,
-                transform: loaded ? 'scale(1)' : 'scale(1.1)',
-                transition: 'all 0.3s ease-in-out'
-              }}
-              onLoad={() => setLoaded(true)}
-              onError={(e) => {
-                console.warn('Failed to load image:', work.imageUrl);
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </button>
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center">
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-white/20">
-              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-            </svg>
-          </div>
-        )}
-
-        {/* Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-orange-500/10 mix-blend-overlay" />
-
-        {/* Badge */}
-        <div className="absolute top-4 left-4 z-10">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-medium transform transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
-            <IconComponent className="w-3 h-3" />
-            {work.badge}
-          </div>
+      {work.imageUrl ? (
+        <button type="button" className="block w-full group" onClick={onOpen} aria-label={`Open ${work.title}`}>
+          {!loaded && (
+            <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
+              <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+          <img
+            ref={imgRef}
+            src={work.imageUrl}
+            srcSet={getResponsiveSrcSet()}
+            sizes={getSizes()}
+            alt={work.title}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-auto object-contain transition-all duration-700 group-hover:scale-105 will-change-transform"
+            style={{ 
+              opacity: loaded ? 1 : 0,
+              transform: loaded ? 'scale(1)' : 'scale(1.05)',
+              transition: 'all 0.3s ease-in-out',
+              display: loaded ? 'block' : 'none'
+            }}
+            onLoad={handleImageLoad}
+            onError={(e) => {
+              console.warn('Failed to load image:', work.imageUrl);
+              (e.currentTarget as HTMLImageElement).style.display = 'none';
+            }}
+          />
+        </button>
+      ) : (
+        <div className="w-full bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
+          <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-white/20">
+            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+          </svg>
         </div>
+      )}
 
-        {/* Icons */}
-        <div className="absolute top-4 right-4 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-          <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-            <Eye className="w-4 h-4" />
-          </div>
-          <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-            <Heart className="w-4 h-4" />
-          </div>
-        </div>
+      {/* Overlays - only show when image is loaded */}
+      {loaded && work.imageUrl && (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-orange-500/10 mix-blend-overlay pointer-events-none" />
 
-        {/* Content */}
-        <div className="absolute inset-0 flex flex-col justify-end p-6">
-          <div className="transform transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-            <h3 className="text-white font-bold mb-2 drop-shadow-lg" style={{
-              fontSize: layoutType === "hero" ? "2rem" : layoutType === "tall" ? "1.5rem" : "1.25rem",
-              lineHeight: "1.2",
-            }}>
-              {work.title}
-            </h3>
-            <p className="text-white/80 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-              {work.description}
-            </p>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 text-white/90 text-sm font-medium opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:text-white"
-            onClick={onOpen}
-          >
-            <span>View More</span>
-            <ArrowRight className="w-4 h-4 transition-transform md:group-hover:translate-x-1" />
-          </button>
+          {/* Badge */}
+          <div className="absolute top-4 left-4 z-10">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-medium transform transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
+              <Play className="w-3 h-3" />
+            </div>
           </div>
-        </div>
 
-        {/* Decorative corners */}
-        <div className="absolute top-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-l-2 border-t-2 border-white/20 opacity-30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="absolute bottom-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-r-2 border-b-2 border-white/20 opacity-30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500" />
-      </div>
+          {/* Icons */}
+          <div className="absolute top-4 right-4 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <Eye className="w-4 h-4" />
+            </div>
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <Heart className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none">
+            <div className="transform transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+              <h3 className="text-white font-bold mb-2 drop-shadow-lg text-lg">
+                {work.title}
+              </h3>
+              <p className="text-white/80 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                {work.description}
+              </p>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 text-white/90 text-sm font-medium opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:text-white pointer-events-auto"
+                onClick={onOpen}
+              >
+                <span>View More</span>
+                <ArrowRight className="w-4 h-4 transition-transform md:group-hover:translate-x-1" />
+              </button>
+            </div>
+          </div>
+
+          {/* Decorative corners */}
+          <div className="absolute top-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-l-2 border-t-2 border-white/20 opacity-30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-r-2 border-b-2 border-white/20 opacity-30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        </>
+      )}
     </div>
   );
 };
@@ -177,44 +182,52 @@ export const Gallery = () => {
     { 
       title: "Tech Conference Live Stream", 
       description: "Multi-camera setup for 1,000+ attendees with real-time streaming", 
-      badge: "Livefeed", 
-      iconName: "Play",
-      imageUrl: image10 // 0FK_0696.webp
+      imageUrl: image1 // 20191208-LAN_0281.webp
     },
     { 
       title: "Corporate Headshot Session", 
       description: "Professional headshots for 50+ executives in a single day", 
-      badge: "Photography", 
-      iconName: "Camera",
       imageUrl: image2 // AIN00523.webp
     },
     { 
       title: "Wedding Live Coverage", 
       description: "Complete ceremony and reception with cinematic highlights", 
-      badge: "Event Coverage", 
-      iconName: "Zap",
-      imageUrl: image6 // FKP03731.webp
+      imageUrl: image3 // AIN00718.webp
     },
     { 
       title: "Product Launch Event", 
       description: "High-end product photography and live streaming for brand launch", 
-      badge: "Commercial", 
-      iconName: "Camera",
-      imageUrl: image3 // AIN00718.webp
+      imageUrl: image4 // Amin-Rashidi-Studio-664.webp
     },
     { 
       title: "Corporate Training Session", 
       description: "Multi-location training session with interactive Q&A", 
-      badge: "Education", 
-      iconName: "Play",
       imageUrl: image5 // DSC_3411.webp
     },
     { 
       title: "Award Ceremony Coverage", 
       description: "Red carpet photography and live award ceremony streaming", 
-      badge: "Events", 
-      iconName: "Zap",
+      imageUrl: image6 // FKP03731.webp
+    },
+    { 
+      title: "Team Building Event", 
+      description: "Dynamic coverage of corporate team building activities", 
       imageUrl: image7 // FKP03833.webp
+    },
+    { 
+      title: "Intimate Wedding Ceremony", 
+      description: "Breathtaking coverage of intimate wedding ceremonies", 
+      imageUrl: image8 // FKP03935.webp
+    },
+    { 
+      title: "Corporate Event Photography", 
+      description: "Comprehensive coverage of corporate events, conferences, and business meetings", 
+      imageUrl: image9 // 0FK_1526.webp
+    },
+    { 
+      title: "Corporate Event Photography", 
+      description: "Comprehensive coverage of corporate events, conferences, and business meetings", 
+      imageUrl: image10 // 0FK_0696.webp
     },
   ];
 
@@ -222,13 +235,9 @@ export const Gallery = () => {
     return staticGalleryData.map((i: any) => ({
       title: i.title,
       description: i.description,
-      badge: i.badge,
-      Icon: iconMap[i.iconName] || Play,
       imageUrl: i.imageUrl,
     }));
   }, []);
-
-  const getLayoutType = (_index: number): "hero" | "tall" | "wide" | "square" => "square";
 
   return (
     // Main section container with padding and background styling
@@ -242,18 +251,23 @@ export const Gallery = () => {
             Featured Work
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Showcasing our expertise in delivering exceptional livestreaming and photography services across Malaysia
+            Showcasing our expertise in delivering exceptional photography services across Malaysia
           </p>
         </div>
 
-        {/* Uniform grid to reduce empty space and misalignment */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+        {/* Masonry layout using CSS columns */}
+        <div 
+          className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 mb-16"
+          style={{
+            columnFill: 'balance',
+            columnGap: '1.5rem'
+          }}
+        >
           {items.map((work, index) => (
-            <CreativeGalleryTile
+            <MasonryTile
               key={index}
               work={work}
               index={index}
-              layoutType={getLayoutType(index)}
               onOpen={() => setCurrentIndex(index)}
             />
           ))}

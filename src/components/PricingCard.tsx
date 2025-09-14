@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
-import { ButtonBookingForm } from "@/components/ButtonBookingForm";
 
 interface PricingCardProps {
   title: string;
@@ -16,11 +15,12 @@ interface PricingCardProps {
 }
 
 export const PricingCard = ({ title, price, description, features, addOns, isPopular, badge }: PricingCardProps) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllFeatures, setShowAllFeatures] = useState(false);
 
   const handleGetStarted = () => {
-    setIsModalOpen(true);
+    const message = `Hi, I'm interested in booking the ${title} package with Ainan Media Sdn Bhd.`;
+    const encodedMessage = encodeURIComponent(message);
+    window.open(`https://wa.me/6012770471?text=${encodedMessage}`, '_blank');
   };
   return (
   <Card className={`h-full flex flex-col p-8 relative ${isPopular ? 'border-accent border-2 shadow-elegant' : 'shadow-soft'} hover:shadow-elegant transition-all duration-300 transform-gpu hover:-translate-y-1 hover:scale-[1.01]`}>
@@ -85,13 +85,6 @@ export const PricingCard = ({ title, price, description, features, addOns, isPop
           Book Now
         </Button>
       </div>
-
-      {/* Booking Modal */}
-      <ButtonBookingForm
-        packageName={title}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
     </Card>
   );
 };

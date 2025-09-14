@@ -76,7 +76,7 @@ export const ContactSection = () => {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+60 12-345 6789"
+                    placeholder="+60 12-770 471"
                     className="w-full"
                   />
                 </div>
@@ -122,7 +122,7 @@ export const ContactSection = () => {
             {/* Ainan Studio Card */}
             <div className="bg-white rounded-lg shadow-soft p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                Ainan Studio
+                Ainan Media Sdn Bhd
               </h3>
               <p className="text-gray-600 text-sm mb-4">
                 Livestream Experts
@@ -140,11 +140,11 @@ export const ContactSection = () => {
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-700">+60 12-345 6789</span>
+                  <span className="text-gray-700">+60 12-770 471</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-blue-600" />
-                  <span className="text-gray-700">hello@ainan.studio</span>
+                  <span className="text-gray-700">team@ainanstudio.com</span>
                 </div>
               </div>
             </div>

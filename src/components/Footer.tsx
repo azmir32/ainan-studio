@@ -13,7 +13,12 @@ export const Footer = () => {
             <p className="text-base sm:text-lg mb-8 text-primary-foreground/80">
               Contact us today to schedule your on-site headshot session and give your team the professional edge they deserve.
             </p>
-            <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+            <Button 
+              variant="secondary" 
+              size="lg" 
+              className="w-full sm:w-auto"
+              onClick={() => window.open('https://wa.me/6012770471?text=Hi%2C%20I%27m%20interested%20in%20booking%20a%20session%20with%20Ainan%20Media%20Sdn%20Bhd.', '_blank')}
+            >
               Book Your Session
             </Button>
           </div>
@@ -25,7 +30,7 @@ export const Footer = () => {
               </div>
               <div>
                 <div className="font-semibold text-sm md:text-base">Call Us</div>
-                <div className="text-primary-foreground/80 text-sm md:text-base">+60 12-345 6789</div>
+                <div className="text-primary-foreground/80 text-sm md:text-base">+60 12-770 471</div>
               </div>
             </div>
 
@@ -35,7 +40,7 @@ export const Footer = () => {
               </div>
               <div>
                 <div className="font-semibold text-sm md:text-base">Email Us</div>
-                <div className="text-primary-foreground/80 text-sm md:text-base">hello@headshotpro.my</div>
+                <div className="text-primary-foreground/80 text-sm md:text-base">team@ainanstudio.com</div>
               </div>
             </div>
 
@@ -53,7 +58,7 @@ export const Footer = () => {
 
         <div className="border-t border-primary-foreground/20 mt-12 pt-8 text-center">
           <p className="text-primary-foreground/60 text-sm md:text-base">
-            © {new Date().getFullYear()} Ainan Studio. All rights reserved. Professional headshot photography services in Kuala Lumpur.
+            © {new Date().getFullYear()} Ainan Media Sdn Bhd. All rights reserved. Professional livestreaming and photography services in Kuala Lumpur.
           </p>
         </div>
       </div>

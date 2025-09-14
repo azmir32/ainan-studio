@@ -35,20 +35,24 @@ export const Header = () => {
             to="/packages" 
             className="text-foreground/80 hover:text-foreground transition-colors duration-200 font-medium relative group"
           >
-            Packages
+            
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
           </Link>
           <Link 
             to="/contact" 
             className="text-foreground/80 hover:text-foreground transition-colors duration-200 font-medium relative group"
           >
-            Contact
+            
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
           </Link>
         </nav>
 
         <div className="flex items-center gap-2">
-          <Button variant="premium" className="shadow-lg hover:shadow-xl transition-all duration-200 hidden md:inline-flex">
+          <Button 
+            variant="premium" 
+            className="shadow-lg hover:shadow-xl transition-all duration-200 hidden md:inline-flex"
+            onClick={() => window.open('https://wa.me/6012770471?text=Hi%2C%20I%27m%20interested%20in%20booking%20a%20session%20with%20Ainan%20Media%20Sdn%20Bhd.', '_blank')}
+          >
             Book Now
           </Button>
           {/* Mobile menu */}
@@ -67,7 +71,13 @@ export const Header = () => {
                   <Link to="/portfolio" className="text-base py-2">Portfolio</Link>
                   <Link to="/packages" className="text-base py-2">Packages</Link>
                   <Link to="/contact" className="text-base py-2">Contact</Link>
-                  <Button variant="premium" className="mt-4">Book Now</Button>
+                  <Button 
+                    variant="premium" 
+                    className="mt-4"
+                    onClick={() => window.open('https://wa.me/6012770471?text=Hi%2C%20I%27m%20interested%20in%20booking%20a%20session%20with%20Ainan%20Media%20Sdn%20Bhd.', '_blank')}
+                  >
+                    Book Now
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>

@@ -1,12 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Camera, MapPin, Clock } from "lucide-react";
+import { Video, MapPin, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { AssistantChat } from "./ui/assistant-chat";
 import heroImage from "@/assets/heroImage";
 
-
-export const Hero = () => {
+export const LiveFeedHero = () => {
   const navigate = useNavigate();
 
   return (
@@ -25,18 +24,18 @@ export const Hero = () => {
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
         <Badge variant="secondary" className="mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm shadow-lg">
           <MapPin className="w-4 h-4 mr-2" />
-          Kuala Lumpur On-Site Service
+          Kuala Lumpur Live Streaming
         </Badge>
 
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-2xl">
-          Professional <br /> Business Photos
-          <span className="block text-accent drop-shadow-2xl">Right Where You Work</span>
+          Professional <br /> Live Streaming
+          <span className="block text-accent drop-shadow-2xl">For Your Events</span>
         </h1>
 
         <h2 className="text-4xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-2xl text-accent">
-          Skip Travel<br/>
-          Save Time<br/>
-          <span className="block text-white/95 drop-shadow-md">We bring the corporate photoshoot to your office</span>
+          Real-Time<br/>
+          High-Quality<br/>
+          <span className="block text-white/95 drop-shadow-md">We bring professional live streaming to your venue</span>
         </h2>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -45,27 +44,27 @@ export const Hero = () => {
             className="shadow-2xl backdrop-blur-sm"
             onClick={() => navigate('/packages')}
           >
-            <Camera className="w-5 h-5 mr-2" />
-            View Packages
+            <Video className="w-5 h-5 mr-2" />
+            View Live Feed Packages
           </Button>
           <Button
             variant="outline"
             className="bg-white/20 border-white/40 text-white hover:bg-white/30 backdrop-blur-sm shadow-lg"
-            onClick={() => navigate('/portfolio')}
+            onClick={() => navigate('/livefeed-portfolio')}
           >
             <Clock className="w-5 h-5 mr-2" />
-            See Our Portfolio
+            See Our Live Streams
           </Button>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 max-w-2xl mx-auto">
           <div className="text-center backdrop-blur-sm bg-black/30 px-6 py-4 rounded-lg shadow-lg">
-            <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">48h</div>
-            <div className="text-white/90 drop-shadow-md">Rush Delivery</div>
+            <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">HD</div>
+            <div className="text-white/90 drop-shadow-md">Live Streaming</div>
           </div>
           <div className="text-center backdrop-blur-sm bg-black/30 px-6 py-4 rounded-lg shadow-lg">
-            <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">100%</div>
-            <div className="text-white/90 drop-shadow-md">On-Site Service</div>
+            <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">24/7</div>
+            <div className="text-white/90 drop-shadow-md">Technical Support</div>
           </div>
         </div>
       </div>

@@ -5,8 +5,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import LiveFeed from "./pages/LiveFeed";
 import NotFound from "./pages/NotFound";
 import { PortfolioPage } from "./pages/portfolio-page";
+import { LiveFeedPortfolioPage } from "./pages/LiveFeedPortfolioPage";
 import { ContactPage } from "./pages/contact-pages";
 import { PackagesPage } from "./pages/packages-page";
 import AdminLogin from "./pages/admin/Login";
@@ -23,7 +25,9 @@ const App = () => (
       <HashRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/livefeed" element={<LiveFeed />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/livefeed-portfolio" element={<LiveFeedPortfolioPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminDashboard />} />
