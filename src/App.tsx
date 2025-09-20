@@ -14,6 +14,7 @@ import { PackagesPage } from "./pages/packages-page";
 import AdminLogin from "./pages/admin/Login";
 import AdminDashboard from "./pages/admin/Dashboard";
 import MobileTabBar from "@/components/ui/mobile-tabbar";
+import { FloatingButton } from "@/components/ui/floating-button";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
         <MobileTabBar />
+        <FloatingButton />
       </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>

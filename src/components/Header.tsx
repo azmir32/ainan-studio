@@ -31,20 +31,6 @@ export const Header = () => {
             Portfolio
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
           </Link>
-          <Link 
-            to="/packages" 
-            className="text-foreground/80 hover:text-foreground transition-colors duration-200 font-medium relative group"
-          >
-            
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
-          </Link>
-          <Link 
-            to="/contact" 
-            className="text-foreground/80 hover:text-foreground transition-colors duration-200 font-medium relative group"
-          >
-            
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
-          </Link>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -55,8 +41,8 @@ export const Header = () => {
           >
             Book Now
           </Button>
-          {/* Mobile menu */}
-          <div className="md:hidden">
+          {/* Mobile menu - hidden */}
+          <div className="md:hidden hidden">
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open menu">
@@ -69,8 +55,6 @@ export const Header = () => {
                 </SheetHeader>
                 <div className="mt-6 flex flex-col gap-3">
                   <Link to="/portfolio" className="text-base py-2">Portfolio</Link>
-                  <Link to="/packages" className="text-base py-2">Packages</Link>
-                  <Link to="/contact" className="text-base py-2">Contact</Link>
                   <Button 
                     variant="premium" 
                     className="mt-4"
