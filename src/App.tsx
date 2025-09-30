@@ -1,22 +1,62 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import LiveFeed from "./pages/LiveFeed";
-import NotFound from "./pages/NotFound";
-import { PortfolioPage } from "./pages/portfolio-page";
-import { LiveFeedPortfolioPage } from "./pages/LiveFeedPortfolioPage";
-import { ContactPage } from "./pages/contact-pages";
-import { PackagesPage } from "./pages/packages-page";
-import AdminLogin from "./pages/admin/Login";
-import AdminDashboard from "./pages/admin/Dashboard";
 import MobileTabBar from "@/components/ui/mobile-tabbar";
 import { FloatingButton } from "@/components/ui/floating-button";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { 
+  PAGE_SEO_DATA, 
+  generateLocalBusinessSchema, 
+  generateOrganizationSchema 
+} from "@/lib/seo";
+
+// Lazy load all page components for faster initial load
+const Index = lazy(() => import("./pages/Index"));
+const LiveFeed = lazy(() => import("./pages/LiveFeed"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const PortfolioPage = lazy(() => import("./pages/portfolio-page").then(module => ({ default: module.PortfolioPage })));
+const LiveFeedPortfolioPage = lazy(() => import("./pages/LiveFeedPortfolioPage").then(module => ({ default: module.LiveFeedPortfolioPage })));
+const ContactPage = lazy(() => import("./pages/contact-pages").then(module => ({ default: module.ContactPage })));
+const PackagesPage = lazy(() => import("./pages/packages-page").then(module => ({ default: module.PackagesPage })));
+const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
+
+// Loading component for Suspense fallback
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+  </div>
+);
 
 const queryClient = new QueryClient();
+
+// SEO wrapper component for each page
+const SEOWrapper: React.FC<{ 
+  children: React.ReactNode; 
+  pageKey: keyof typeof PAGE_SEO_DATA;
+  structuredData?: any[];
+}> = ({ children, pageKey, structuredData = [] }) => {
+  const seoData = PAGE_SEO_DATA[pageKey];
+  const allStructuredData = [
+    generateLocalBusinessSchema(),
+    generateOrganizationSchema(),
+    ...structuredData
+  ];
+
+  return (
+    <>
+      <SEOHead seoData={seoData} structuredData={allStructuredData} />
+      <div className="container mx-auto px-4 py-2">
+        <Breadcrumbs />
+      </div>
+      {children}
+    </>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -24,18 +64,62 @@ const App = () => (
       <Toaster />
       <Sonner />
       <HashRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/livefeed" element={<LiveFeed />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/livefeed-portfolio" element={<LiveFeedPortfolioPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/packages" element={<PackagesPage />} /> 
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route 
+              path="/" 
+              element={
+                <SEOWrapper pageKey="home">
+                  <Index />
+                </SEOWrapper>
+              } 
+            />
+            <Route 
+              path="/livefeed" 
+              element={
+                <SEOWrapper pageKey="livefeed">
+                  <LiveFeed />
+                </SEOWrapper>
+              } 
+            />
+            <Route 
+              path="/portfolio" 
+              element={
+                <SEOWrapper pageKey="portfolio">
+                  <PortfolioPage />
+                </SEOWrapper>
+              } 
+            />
+            <Route 
+              path="/livefeed-portfolio" 
+              element={
+                <SEOWrapper pageKey="portfolio">
+                  <LiveFeedPortfolioPage />
+                </SEOWrapper>
+              } 
+            />
+            <Route 
+              path="/contact" 
+              element={
+                <SEOWrapper pageKey="contact">
+                  <ContactPage />
+                </SEOWrapper>
+              } 
+            />
+            <Route 
+              path="/packages" 
+              element={
+                <SEOWrapper pageKey="packages">
+                  <PackagesPage />
+                </SEOWrapper>
+              } 
+            />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminDashboard />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
         <MobileTabBar />
         <FloatingButton />
       </HashRouter>

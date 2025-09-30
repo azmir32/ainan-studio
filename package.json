@@ -5,12 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "dev:fast": "vite --force",
+    "dev:optimize": "node scripts/optimize-dev.js && vite",
+    "build": "npm run generate:sitemap && vite build",
     "build:dev": "vite build --mode development",
-    "build:cloudflare": "npm install && vite build",
+    "build:cloudflare": "npm install && npm run generate:sitemap && vite build",
+    "build:analyze": "vite build --mode analyze",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "clean": "node scripts/optimize-dev.js",
+    "generate:sitemap": "node scripts/simple-sitemap.js",
+    "seo:check": "echo 'SEO files are ready in public/ directory.'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

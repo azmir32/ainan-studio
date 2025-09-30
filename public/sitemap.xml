@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://ainan.studio/</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://ainan.studio/Logo/AINAN-Logo-01.webp</image:loc>
+      <image:caption>Ainan Studio Logo - Professional Photography Services</image:caption>
+      <image:title>Ainan Studio - Professional Photography Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/hero-image.webp</image:loc>
+      <image:caption>Professional Photography Services in Kuala Lumpur</image:caption>
+      <image:title>Professional Photography and Live Streaming Services</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ainan.studio/portfolio</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/20191208-LAN_0281.webp</image:loc>
+      <image:caption>Tech Conference Live Stream - Multi-camera setup for 1,000+ attendees</image:caption>
+      <image:title>Professional Live Streaming Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/AIN00523.webp</image:loc>
+      <image:caption>Corporate Headshot Session - Professional headshots for executives</image:caption>
+      <image:title>Corporate Headshot Photography Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/AIN00718.webp</image:loc>
+      <image:caption>Wedding Live Coverage - Complete ceremony and reception coverage</image:caption>
+      <image:title>Wedding Photography and Live Streaming</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/Amin-Rashidi-Studio-664.webp</image:loc>
+      <image:caption>Product Launch Event - High-end product photography and live streaming</image:caption>
+      <image:title>Event Photography and Live Streaming Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/DSC_3411.webp</image:loc>
+      <image:caption>Corporate Training Session - Multi-location training with interactive Q&A</image:caption>
+      <image:title>Corporate Event Photography Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/FKP03731.webp</image:loc>
+      <image:caption>Award Ceremony Coverage - Red carpet photography and live streaming</image:caption>
+      <image:title>Award Ceremony Photography Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/FKP03833.webp</image:loc>
+      <image:caption>Team Building Event - Dynamic coverage of corporate activities</image:caption>
+      <image:title>Team Building Event Photography</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/FKP03935.webp</image:loc>
+      <image:caption>Intimate Wedding Ceremony - Breathtaking coverage of intimate ceremonies</image:caption>
+      <image:title>Intimate Wedding Photography Services</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/0FK_1526.webp</image:loc>
+      <image:caption>Corporate Event Photography - Comprehensive coverage of business meetings</image:caption>
+      <image:title>Corporate Event Photography Malaysia</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://ainan.studio/assets/imagesCarousel/0FK_0696.webp</image:loc>
+      <image:caption>Corporate Event Photography - Professional business event coverage</image:caption>
+      <image:title>Professional Business Event Photography</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://ainan.studio/livefeed</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://ainan.studio/livefeed-portfolio</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ainan.studio/packages</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://ainan.studio/contact</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+</urlset>
