@@ -61,6 +61,24 @@ export const PricingSection = () => {
         { name: "Rush delivery (48 hours)", price: "RM 150" }
       ],
     },
+    {
+      title: "Live Streaming Package",
+      price: "RM 2,500",
+      description: "Professional multi-camera live streaming for events and corporate functions",
+      features: [
+        "4 hour live streaming session",
+        "Multi-camera setup (2-3 cameras)",
+        "HD quality streaming (1080p)",
+        "Live technical support during event",
+        "Stream to multiple platforms simultaneously",
+        "Recording backup included"
+      ],
+      addOns: [
+        { name: "Additional camera", price: "RM 300/camera" },
+        { name: "Extended streaming time", price: "RM 500/hour" },
+        { name: "4K streaming upgrade", price: "RM 800" }
+      ],
+    },
   ];
 
   return (

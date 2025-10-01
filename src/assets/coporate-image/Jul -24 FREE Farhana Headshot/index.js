@@ -1,5 +1,5 @@
 const Jul_24_FREE_Farhana_Headshot = [
-    "FKP03862.jpg",
+    "nursahila ayub 3.jpg",
     "FKP03870.jpg",
     "FKP03873.jpg",
     "FKP03874.jpg",
@@ -21,7 +21,7 @@ const Jul_24_FREE_Farhana_Headshot = [
     "Nurfarhana Idros 9.jpg",
     "nursahila ayub 1.jpg",
     "nursahila ayub 2.jpg",
-    "nursahila ayub 3.jpg",
+    "FKP03862.jpg.jpg",
     "nursahila ayub 4.jpg",
     "nursahila ayub 5.jpg"
 ];

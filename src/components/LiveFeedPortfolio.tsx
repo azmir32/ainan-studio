@@ -1,6 +1,16 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
+interface LiveFeedItem {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  coverUrl: string;
+  photos: string[];
+  videoUrl?: string;
+}
+
 // Import images directly
 import image1 from "@/assets/imagesCarousel/20191208-LAN_0281.webp";
 import image2 from "@/assets/imagesCarousel/AIN00523.webp";
@@ -18,14 +28,13 @@ const LiveFeedMasonryTile = ({
   index,
   onOpen,
 }: {
-  item: any;
+  item: LiveFeedItem;
   index: number;
   onOpen: () => void;
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const tileRef = useRef<HTMLDivElement>(null);
-  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -40,22 +49,22 @@ const LiveFeedMasonryTile = ({
     return () => observer.disconnect();
   }, [index]);
 
-  const handleImageLoad = () => {
+  const handleVideoLoad = () => {
     setLoaded(true);
   };
 
-  // Calculate responsive image sizes based on container width
-  const getResponsiveSrcSet = () => {
-    if (!item.coverUrl) return '';
-    
-    // For masonry, we want images that match the rendered size
-    const sizes = [300, 400, 500, 600, 800];
-    return sizes.map(size => `${item.coverUrl}?w=${size} ${size}w`).join(', ');
+  // Extract YouTube video ID from URL
+  const getYouTubeVideoId = (url: string) => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
   };
 
-  const getSizes = () => {
-    // Responsive sizes that match our masonry column widths
-    return '(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, (max-width: 1280px) 25vw, 300px';
+  // Create YouTube embed URL with autoplay and loop
+  const getEmbedUrl = (videoUrl: string) => {
+    const videoId = getYouTubeVideoId(videoUrl);
+    if (!videoId) return null;
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=1&showinfo=0&rel=0`;
   };
 
   return (
@@ -69,59 +78,42 @@ const LiveFeedMasonryTile = ({
         transitionDelay: `${index * 100}ms`,
       }}
     >
-      {item.coverUrl ? (
-        <button type="button" className="block w-full group" onClick={onOpen} aria-label={`Open ${item.title}`}>
+      {item.videoUrl ? (
+        <div className="w-full" style={{ aspectRatio: '16/9' }}>
           {!loaded && (
-            <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
+            <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center">
               <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
-          <img
-            ref={imgRef}
-            src={item.coverUrl}
-            srcSet={getResponsiveSrcSet()}
-            sizes={getSizes()}
-            alt={item.title}
-            loading="lazy"
-            decoding="async"
-            className="w-full h-auto object-contain transition-all duration-700 group-hover:scale-105 will-change-transform rounded-t-lg"
+          <iframe
+            src={getEmbedUrl(item.videoUrl) || ''}
+            title={item.title}
+            className="w-full h-full rounded-t-lg transition-all duration-700 group-hover:scale-105 will-change-transform"
             style={{ 
               opacity: loaded ? 1 : 0,
               transform: loaded ? 'scale(1)' : 'scale(1.05)',
               transition: 'all 0.3s ease-in-out',
               display: loaded ? 'block' : 'none'
             }}
-            onLoad={handleImageLoad}
-            onError={(e) => {
-              console.warn('Failed to load image:', item.coverUrl);
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
-            }}
+            onLoad={handleVideoLoad}
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
           />
-        </button>
+        </div>
       ) : (
-        <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-t-lg" style={{ aspectRatio: '3/2' }}>
+        <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-t-lg" style={{ aspectRatio: '16/9' }}>
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-gray-400 opacity-30">
-            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+            <path d="M8 5v14l11-7z"/>
           </svg>
         </div>
       )}
 
       {/* Live Feed Badge */}
-      {loaded && item.coverUrl && (
+      {loaded && item.videoUrl && (
         <div className="absolute top-4 left-4 z-10">
           <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
             {item.category}
-          </div>
-        </div>
-      )}
-
-      {/* Video Play Icon Overlay */}
-      {loaded && item.coverUrl && (
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-16 h-16 bg-red-600/90 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
           </div>
         </div>
       )}
@@ -139,10 +131,8 @@ const LiveFeedMasonryTile = ({
   );
 };
 
-export const LiveFeedPortfolio = () => {
-  
-  // Static live feed portfolio data
-  const staticLiveFeedData = [
+// Static live feed portfolio data
+const staticLiveFeedData: LiveFeedItem[] = [
     {
       id: "1",
       title: "Tech Conference Live Stream",
@@ -153,7 +143,8 @@ export const LiveFeedPortfolio = () => {
         image10, // 0FK_0696.webp
         image2,  // AIN00523.webp
         image6   // FKP03731.webp
-      ]
+      ],
+      videoUrl: "https://youtu.be/G4bVqO4GDWo?si=aI2QViMGcnOSh-0b"
     },
     {
       id: "2",
@@ -241,15 +232,17 @@ export const LiveFeedPortfolio = () => {
     }
   ];
 
+export const LiveFeedPortfolio = () => {
   const items = useMemo(
     () => {
-      return staticLiveFeedData.map((i: any) => ({
+      return staticLiveFeedData.map((i: LiveFeedItem) => ({
         id: i.id,
         title: i.title,
         description: i.description,
         category: i.category,
         coverUrl: i.coverUrl,
-        photos: i.photos
+        photos: i.photos,
+        videoUrl: i.videoUrl
       }));
     },
     []

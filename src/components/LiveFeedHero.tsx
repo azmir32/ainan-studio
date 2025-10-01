@@ -22,20 +22,16 @@ export const LiveFeedHero = () => {
 
       {/* Content */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center text-white">
-        <Badge variant="secondary" className="mb-6 bg-white/20 text-white border-white/30 backdrop-blur-sm shadow-lg">
-          <MapPin className="w-4 h-4 mr-2" />
-          Kuala Lumpur Live Streaming
-        </Badge>
 
-        <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-2xl">
-          Professional <br /> Live Streaming
-          <span className="block text-accent drop-shadow-2xl">For Your Events</span>
+        <h1 className="text-6xl sm:text-xl md:text-7xl font-bold mb-2 leading-tight drop-shadow-2xl">
+          LIVE FEED MCP PROVIDER
         </h1>
+        <h6 className="text-xs sm:text-lg md:text-xl font-bold mb-6 leading-tight drop-shadow-2xl text-accent">
+          (Multi-Camera Production)
+        </h6>
 
         <h2 className="text-4xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-2xl text-accent">
-          Real-Time<br/>
-          High-Quality<br/>
-          <span className="block text-white/95 drop-shadow-md">We bring professional live streaming to your venue</span>
+          Wedding | Coporate Event | Conference | Seminars | Awards Ceremonies | Talk Shows | Webinars | Live Streaming | Annual Dinners
         </h2>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -53,24 +49,21 @@ export const LiveFeedHero = () => {
             onClick={() => navigate('/livefeed-portfolio')}
           >
             <Clock className="w-5 h-5 mr-2" />
-            See Our Live Streams
+            View Our Recording
           </Button>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 max-w-2xl mx-auto">
           <div className="text-center backdrop-blur-sm bg-black/30 px-6 py-4 rounded-lg shadow-lg">
             <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">HD</div>
-            <div className="text-white/90 drop-shadow-md">Live Streaming</div>
+            <div className="text-white/90 drop-shadow-md">Full Recording</div>
           </div>
           <div className="text-center backdrop-blur-sm bg-black/30 px-6 py-4 rounded-lg shadow-lg">
-            <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">24/7</div>
+            <div className="text-2xl md:text-3xl font-bold text-accent drop-shadow-lg">Crew</div>
             <div className="text-white/90 drop-shadow-md">Technical Support</div>
           </div>
         </div>
       </div>
-
-      {/* Floating chat assistant */}
-      <AssistantChat />
     </section>
   );
 };

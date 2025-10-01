@@ -357,7 +357,7 @@ export const Gallery = () => {
 
         {/* Masonry layout using CSS columns */}
         <div 
-          className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 mb-16"
+          className="columns-1 sm:columns-2 lg:columns-3 gap-6 mb-16"
           style={{
             columnFill: 'balance',
             columnGap: '1.5rem'

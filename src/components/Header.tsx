@@ -46,7 +46,7 @@ export const Header = () => {
             onClick={handlePortfolioClick}
             className="text-foreground/80 hover:text-foreground transition-colors duration-200 font-medium relative group"
           >
-            Portfolio
+            {location.pathname === "/livefeed" ? "Our Recording" : "Portfolio"}
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
           </button>
         </nav>
@@ -76,7 +76,7 @@ export const Header = () => {
                     onClick={handlePortfolioClick}
                     className="text-base py-2 text-left"
                   >
-                    Portfolio
+                    {location.pathname === "/livefeed" ? "Our Recording" : "Portfolio"}
                   </button>
                   <Button 
                     variant="premium" 

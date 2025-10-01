@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -20,7 +20,7 @@ export const PricingCard = ({ title, price, description, features, addOns, isPop
   const handleGetStarted = () => {
     const message = `Hi, I'm interested in booking the ${title} package with Ainan Media Sdn Bhd.`;
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/6012770471?text=${encodedMessage}`, '_blank');
+    window.open(`https://wa.me/60136390429?text=${encodedMessage}`, '_blank');
   };
   return (
   <Card className={`h-full flex flex-col p-8 relative ${isPopular ? 'border-accent border-2 shadow-elegant' : 'shadow-soft'} hover:shadow-elegant transition-all duration-300 transform-gpu hover:-translate-y-1 hover:scale-[1.01]`}>
@@ -47,7 +47,24 @@ export const PricingCard = ({ title, price, description, features, addOns, isPop
             {(showAllFeatures ? features : features.slice(0, 6)).map((feature, index) => (
               <li key={index} className="flex items-start gap-3">
                 <Check className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span className="text-foreground leading-relaxed">{feature}</span>
+                <span className="text-foreground leading-relaxed">
+                  {feature.includes("4-5 final retouched images") || feature.includes("4 final retouched image/person") || feature.includes("5 final retouched image/person") ? (
+                    <span className="font-bold">{feature}</span>
+                  ) : feature.includes("session at your location") ? (
+                    feature.replace(/(\d+\s*(?:min|hour))/g, '<span class="font-bold">$1</span>').split('<span class="font-bold">').map((part, i) => {
+                      if (i === 0) return part;
+                      const [boldPart, ...rest] = part.split('</span>');
+                      return (
+                        <React.Fragment key={i}>
+                          <span className="font-bold">{boldPart}</span>
+                          {rest.join('</span>')}
+                        </React.Fragment>
+                      );
+                    })
+                  ) : (
+                    feature
+                  )}
+                </span>
               </li>
             ))}
           </ul>

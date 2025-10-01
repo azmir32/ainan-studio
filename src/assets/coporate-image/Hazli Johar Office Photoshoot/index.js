@@ -1,5 +1,5 @@
 const Hazli_Johar_Office_Photoshoot = [
-    "0FK_4660.jpg",
+    "0FK_5227.jpg",
     "0FK_4690.jpg",
     "0FK_4724.jpg",
     "0FK_4760.jpg",
@@ -35,7 +35,7 @@ const Hazli_Johar_Office_Photoshoot = [
     "0FK_5189.jpg",
     "0FK_5203.jpg",
     "0FK_5219.jpg",
-    "0FK_5227.jpg",
+    "0FK_4660.jpg",
     "0FK_5228.jpg",
     "0FK_5254.jpg",
     "0FK_5264.jpg",

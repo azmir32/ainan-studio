@@ -29,14 +29,13 @@ export const Hero = () => {
         </Badge>
 
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-2xl">
-          Professional <br /> Business Photos
-          <span className="block text-accent drop-shadow-2xl">Right Where You Work</span>
+          Professional Photos
+          <span className="block text-accent drop-shadow-2xl">Without the studio</span>
         </h1>
 
         <h2 className="text-4xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-2xl text-accent">
           Skip Travel<br/>
           Save Time<br/>
-          <span className="block text-white/95 drop-shadow-md">We bring the corporate photoshoot to your office</span>
         </h2>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
