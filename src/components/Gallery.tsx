@@ -31,16 +31,20 @@ const AlbumTile = ({
   album,
   index,
   onOpen,
+  onImageLoad,
 }: {
   album: Album;
   index: number;
   onOpen: () => void;
+  onImageLoad?: (imageUrl: string) => void;
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [imageDimensions, setImageDimensions] = useState<{width: number, height: number} | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showSkeleton, setShowSkeleton] = useState(true);
   const tileRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -81,9 +85,19 @@ const AlbumTile = ({
     if (loadingTimeoutRef.current) {
       clearTimeout(loadingTimeoutRef.current);
     }
+    setIsLoading(false);
     setLoaded(true);
     setImageError(false);
     setRetryCount(0);
+    
+    // Track loaded image
+    if (onImageLoad && album.coverImage) {
+      onImageLoad(album.coverImage);
+    }
+    
+    // Hide skeleton after a short delay for smooth transition
+    setTimeout(() => setShowSkeleton(false), 300);
+    
     if (imgRef.current) {
       const { naturalWidth, naturalHeight } = imgRef.current;
       setImageDimensions({ width: naturalWidth, height: naturalHeight });
@@ -105,6 +119,7 @@ const AlbumTile = ({
         setRetryCount(prev => prev + 1);
         setImageError(false);
         setLoaded(false);
+        setIsLoading(true);
         // Force image reload by updating src
         if (imgRef.current) {
           const currentSrc = imgRef.current.src;
@@ -116,6 +131,8 @@ const AlbumTile = ({
       // Max retries reached, show error state
       setImageError(true);
       setLoaded(true);
+      setIsLoading(false);
+      setShowSkeleton(false);
     }
   };
 
@@ -129,6 +146,8 @@ const AlbumTile = ({
     setRetryCount(0);
     setImageError(false);
     setLoaded(false);
+    setIsLoading(true);
+    setShowSkeleton(true);
     // Force image reload
     if (imgRef.current) {
       const currentSrc = imgRef.current.src;
@@ -166,27 +185,51 @@ const AlbumTile = ({
     >
       {album.coverImage ? (
         <>
-          {!loaded && !imageError && (
-            <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
-              <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+          {/* Enhanced Loading Skeleton */}
+          {showSkeleton && (
+            <div className="w-full bg-gradient-to-br from-gray-200 via-gray-300 to-gray-200 animate-pulse flex flex-col items-center justify-center relative overflow-hidden" style={{ aspectRatio: '3/2' }}>
+              {/* Shimmer effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+              
+              {/* Loading spinner */}
+              <div className="relative z-10 flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
+                <div className="text-xs text-gray-500 font-medium">Loading...</div>
+              </div>
+              
+              {/* Skeleton content */}
+              <div className="absolute bottom-4 left-4 right-4 z-10">
+                <div className="h-4 bg-gray-300 rounded mb-2 animate-pulse"></div>
+                <div className="h-3 bg-gray-300 rounded w-3/4 animate-pulse"></div>
+              </div>
             </div>
           )}
+          
+          {/* Main Image */}
           <img
             ref={imgRef}
             src={album.coverImage}
             alt={album.title}
-            loading="eager"
+            loading={index < 3 ? "eager" : "lazy"}
             decoding="async"
             className="w-full h-auto object-cover transition-all duration-700 group-hover:scale-105 will-change-transform"
             style={{ 
               opacity: loaded ? 1 : 0,
               transform: loaded ? 'scale(1)' : 'scale(1.05)',
-              transition: 'all 0.3s ease-in-out',
+              transition: 'all 0.5s ease-in-out',
               display: loaded ? 'block' : 'none'
             }}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
+          
+          {/* Loading indicator overlay */}
+          {isLoading && !showSkeleton && (
+            <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          )}
+          
           {/* Clickable overlay - only when image is loaded */}
           {loaded && !imageError && (
             <button 
@@ -276,68 +319,90 @@ const AlbumTile = ({
 export const Gallery = () => {
   const [currentAlbum, setCurrentAlbum] = useState<Album | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
+  const [totalImages, setTotalImages] = useState<number>(0);
   
   // Create albums from corporate image folders
   const albums = useMemo<Album[]>(() => {
-    return [
+    // Helper function to create image URLs with optimization
+    const createImageUrl = (folder: string, filename: string) => {
+      try {
+        return new URL(`../assets/coporate-image/${folder}/${filename}`, import.meta.url).href;
+      } catch (error) {
+        console.warn(`Failed to create URL for ${folder}/${filename}:`, error);
+        // Fallback to a relative path
+        return `/src/assets/coporate-image/${folder}/${filename}`;
+      }
+    };
+
+    const albumsData = [
       {
         id: "cynco",
         title: "Cynco.io Corporate Photography",
         description: "Comprehensive corporate photography session for Cynco.io, showcasing professional headshots and office environment",
-        coverImage: new URL(`../assets/coporate-image/Cynco.io/${CyncoImages[0]}`, import.meta.url).href,
-        images: CyncoImages.map(img => new URL(`../assets/coporate-image/Cynco.io/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("Cynco.io", CyncoImages[0]),
+        images: CyncoImages.map(img => createImageUrl("Cynco.io", img)),
         imageCount: CyncoImages.length
       },
       {
         id: "amran",
         title: "Amran Professional Headshots",
         description: "Professional headshot session featuring high-quality corporate portraits",
-        coverImage: new URL(`../assets/coporate-image/Amran/${AmranImages[0]}`, import.meta.url).href,
-        images: AmranImages.map(img => new URL(`../assets/coporate-image/Amran/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("Amran", AmranImages[0]),
+        images: AmranImages.map(img => createImageUrl("Amran", img)),
         imageCount: AmranImages.length
       },
       {
         id: "bni-karisma",
         title: "BNI Karisma Event Photography",
         description: "Complete coverage of BNI Karisma corporate event with professional photography",
-        coverImage: new URL(`../assets/coporate-image/BNI Karisma/${BNIKarismaImages[0]}`, import.meta.url).href,
-        images: BNIKarismaImages.map(img => new URL(`../assets/coporate-image/BNI Karisma/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("BNI Karisma", BNIKarismaImages[0]),
+        images: BNIKarismaImages.map(img => createImageUrl("BNI Karisma", img)),
         imageCount: BNIKarismaImages.length
       },
       {
         id: "dr-adam",
         title: "Dr Adam Zubir Photoshoot",
         description: "Professional photography session for Dr Adam Zubir with corporate and portrait shots",
-        coverImage: new URL(`../assets/coporate-image/Dr Adam Zubir Photoshoot/${DrAdamImages[0]}`, import.meta.url).href,
-        images: DrAdamImages.map(img => new URL(`../assets/coporate-image/Dr Adam Zubir Photoshoot/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("Dr Adam Zubir Photoshoot", DrAdamImages[0]),
+        images: DrAdamImages.map(img => createImageUrl("Dr Adam Zubir Photoshoot", img)),
         imageCount: DrAdamImages.length
       },
       {
         id: "hazli",
         title: "Hazli Johar Office Photoshoot",
         description: "Corporate office photography session for Hazli Johar with professional headshots",
-        coverImage: new URL(`../assets/coporate-image/Hazli Johar Office Photoshoot/${HazliImages[0]}`, import.meta.url).href,
-        images: HazliImages.map(img => new URL(`../assets/coporate-image/Hazli Johar Office Photoshoot/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("Hazli Johar Office Photoshoot", HazliImages[0]),
+        images: HazliImages.map(img => createImageUrl("Hazli Johar Office Photoshoot", img)),
         imageCount: HazliImages.length
       },
       {
         id: "farhana",
         title: "Farhana Headshot Session",
         description: "Professional headshot photography session for Farhana",
-        coverImage: new URL(`../assets/coporate-image/Jul -24 FREE Farhana Headshot/${FarhanaImages[0]}`, import.meta.url).href,
-        images: FarhanaImages.map(img => new URL(`../assets/coporate-image/Jul -24 FREE Farhana Headshot/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("Jul -24 FREE Farhana Headshot", FarhanaImages[0]),
+        images: FarhanaImages.map(img => createImageUrl("Jul -24 FREE Farhana Headshot", img)),
         imageCount: FarhanaImages.length
       },
       {
         id: "nabilah",
         title: "Nabilah Photoshoot",
         description: "Professional photography session for Nabilah with creative and corporate shots",
-        coverImage: new URL(`../assets/coporate-image/Nabilah Photoshoot/${NabilahImages[0]}`, import.meta.url).href,
-        images: NabilahImages.map(img => new URL(`../assets/coporate-image/Nabilah Photoshoot/${img}`, import.meta.url).href),
+        coverImage: createImageUrl("Nabilah Photoshoot", NabilahImages[0]),
+        images: NabilahImages.map(img => createImageUrl("Nabilah Photoshoot", img)),
         imageCount: NabilahImages.length
       }
     ];
+
+    // Calculate total images for progress tracking
+    const total = albumsData.reduce((sum, album) => sum + album.imageCount, 0);
+    setTotalImages(total);
+
+    return albumsData;
   }, []);
+
+  // Calculate loading progress
+  const loadingProgress = totalImages > 0 ? (loadedImages.size / totalImages) * 100 : 0;
 
   return (
     // Main section container with padding and background styling
@@ -350,9 +415,25 @@ export const Gallery = () => {
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Featured Work
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Showcasing our expertise in delivering exceptional photography services across Malaysia
           </p>
+          
+          {/* Loading Progress Indicator */}
+          {loadingProgress < 100 && totalImages > 0 && (
+            <div className="max-w-md mx-auto">
+              <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
+                <span>Loading gallery...</span>
+                <span>{Math.round(loadingProgress)}%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 h-full rounded-full transition-all duration-500 ease-out"
+                  style={{ width: `${loadingProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Masonry layout using CSS columns */}
@@ -371,6 +452,9 @@ export const Gallery = () => {
               onOpen={() => {
                 setCurrentAlbum(album);
                 setCurrentImageIndex(0);
+              }}
+              onImageLoad={(imageUrl) => {
+                setLoadedImages(prev => new Set([...prev, imageUrl]));
               }}
             />
           ))}
@@ -410,14 +494,29 @@ export const Gallery = () => {
           </DialogDescription>
           {currentAlbum && (
             <div className="relative">
+              {/* Lightbox Loading Indicator */}
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <div className="text-white text-sm">Loading image...</div>
+                </div>
+              </div>
+              
               <img
                 src={currentAlbum.images[currentImageIndex]}
                 alt={`${currentAlbum.title} - Image ${currentImageIndex + 1}`}
-                className="w-full h-auto object-contain max-h-[80vh]"
+                className="w-full h-auto object-contain max-h-[80vh] transition-opacity duration-300"
                 loading="eager"
                 style={{ 
                   maxWidth: '100%',
                   height: 'auto'
+                }}
+                onLoad={(e) => {
+                  // Hide loading indicator when image loads
+                  const loadingIndicator = e.currentTarget.parentElement?.querySelector('.absolute.inset-0.flex.items-center.justify-center') as HTMLElement;
+                  if (loadingIndicator) {
+                    loadingIndicator.style.display = 'none';
+                  }
                 }}
               />
               {/* Prev/Next controls */}
