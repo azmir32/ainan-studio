@@ -164,8 +164,8 @@ export const Portfolio = () => {
         id: "cynco",
         title: "Cynco.io Corporate Photography",
         description: "Comprehensive corporate photography session for Cynco.io, showcasing professional headshots and office environment",
-        coverImage: `/src/assets/coporate-image/Cynco.io/${CyncoImages[0]}`,
-        images: CyncoImages.map(img => `/src/assets/coporate-image/Cynco.io/${img}`),
+        coverImage: new URL(`../assets/coporate-image/Cynco.io/${CyncoImages[0]}`, import.meta.url).href,
+        images: CyncoImages.map(img => new URL(`../assets/coporate-image/Cynco.io/${img}`, import.meta.url).href),
         imageCount: CyncoImages.length,
         category: "Corporate"
       },
@@ -173,8 +173,8 @@ export const Portfolio = () => {
         id: "amran",
         title: "Amran Professional Headshots",
         description: "Professional headshot session featuring high-quality corporate portraits",
-        coverImage: `/src/assets/coporate-image/Amran/${AmranImages[0]}`,
-        images: AmranImages.map(img => `/src/assets/coporate-image/Amran/${img}`),
+        coverImage: new URL(`../assets/coporate-image/Amran/${AmranImages[0]}`, import.meta.url).href,
+        images: AmranImages.map(img => new URL(`../assets/coporate-image/Amran/${img}`, import.meta.url).href),
         imageCount: AmranImages.length,
         category: "Corporate"
       },
@@ -182,8 +182,8 @@ export const Portfolio = () => {
         id: "bni-karisma",
         title: "BNI Karisma Event Photography",
         description: "Complete coverage of BNI Karisma corporate event with professional photography",
-        coverImage: `/src/assets/coporate-image/BNI Karisma/${BNIKarismaImages[0]}`,
-        images: BNIKarismaImages.map(img => `/src/assets/coporate-image/BNI Karisma/${img}`),
+        coverImage: new URL(`../assets/coporate-image/BNI Karisma/${BNIKarismaImages[0]}`, import.meta.url).href,
+        images: BNIKarismaImages.map(img => new URL(`../assets/coporate-image/BNI Karisma/${img}`, import.meta.url).href),
         imageCount: BNIKarismaImages.length,
         category: "Events"
       },
@@ -191,8 +191,8 @@ export const Portfolio = () => {
         id: "dr-adam",
         title: "Dr Adam Zubir Photoshoot",
         description: "Professional photography session for Dr Adam Zubir with corporate and portrait shots",
-        coverImage: `/src/assets/coporate-image/Dr Adam Zubir Photoshoot/${DrAdamImages[0]}`,
-        images: DrAdamImages.map(img => `/src/assets/coporate-image/Dr Adam Zubir Photoshoot/${img}`),
+        coverImage: new URL(`../assets/coporate-image/Dr Adam Zubir Photoshoot/${DrAdamImages[0]}`, import.meta.url).href,
+        images: DrAdamImages.map(img => new URL(`../assets/coporate-image/Dr Adam Zubir Photoshoot/${img}`, import.meta.url).href),
         imageCount: DrAdamImages.length,
         category: "Corporate"
       },
@@ -200,8 +200,8 @@ export const Portfolio = () => {
         id: "hazli",
         title: "Hazli Johar Office Photoshoot",
         description: "Corporate office photography session for Hazli Johar with professional headshots",
-        coverImage: `/src/assets/coporate-image/Hazli Johar Office Photoshoot/${HazliImages[0]}`,
-        images: HazliImages.map(img => `/src/assets/coporate-image/Hazli Johar Office Photoshoot/${img}`),
+        coverImage: new URL(`../assets/coporate-image/Hazli Johar Office Photoshoot/${HazliImages[0]}`, import.meta.url).href,
+        images: HazliImages.map(img => new URL(`../assets/coporate-image/Hazli Johar Office Photoshoot/${img}`, import.meta.url).href),
         imageCount: HazliImages.length,
         category: "Corporate"
       },
@@ -209,8 +209,8 @@ export const Portfolio = () => {
         id: "farhana",
         title: "Farhana Headshot Session",
         description: "Professional headshot photography session for Farhana",
-        coverImage: `/src/assets/coporate-image/Jul -24 FREE Farhana Headshot/${FarhanaImages[0]}`,
-        images: FarhanaImages.map(img => `/src/assets/coporate-image/Jul -24 FREE Farhana Headshot/${img}`),
+        coverImage: new URL(`../assets/coporate-image/Jul -24 FREE Farhana Headshot/${FarhanaImages[0]}`, import.meta.url).href,
+        images: FarhanaImages.map(img => new URL(`../assets/coporate-image/Jul -24 FREE Farhana Headshot/${img}`, import.meta.url).href),
         imageCount: FarhanaImages.length,
         category: "Corporate"
       },
@@ -218,8 +218,8 @@ export const Portfolio = () => {
         id: "nabilah",
         title: "Nabilah Photoshoot",
         description: "Professional photography session for Nabilah with creative and corporate shots",
-        coverImage: `/src/assets/coporate-image/Nabilah Photoshoot/${NabilahImages[0]}`,
-        images: NabilahImages.map(img => `/src/assets/coporate-image/Nabilah Photoshoot/${img}`),
+        coverImage: new URL(`../assets/coporate-image/Nabilah Photoshoot/${NabilahImages[0]}`, import.meta.url).href,
+        images: NabilahImages.map(img => new URL(`../assets/coporate-image/Nabilah Photoshoot/${img}`, import.meta.url).href),
         imageCount: NabilahImages.length,
         category: "Corporate"
       }
