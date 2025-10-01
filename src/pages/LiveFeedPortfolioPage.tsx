@@ -1,13 +1,13 @@
-import { Header } from "@/components/Header";
+import { LiveFeedHeader } from "@/components/LiveFeedHeader";
 import { LiveFeedPortfolio } from "@/components/LiveFeedPortfolio";
-import { Footer } from "@/components/Footer";
+import { LiveFeedFooter } from "@/components/LiveFeedFooter";
 
 export const LiveFeedPortfolioPage = () => {
   return (
     <div className="min-h-screen">
-      <Header />
+      <LiveFeedHeader />
       <LiveFeedPortfolio />
-      <Footer />
+      <LiveFeedFooter />
     </div>
   );
 };

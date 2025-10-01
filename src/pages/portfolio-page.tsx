@@ -1,11 +1,11 @@
-import { Header } from "@/components/Header";
+import { CorporateHeader } from "@/components/CorporateHeader";
 import { Portfolio } from "@/components/Portfolio";
 import { Footer } from "@/components/Footer";
 
 export const PortfolioPage = () => {
   return (
     <div className="min-h-screen">
-      <Header />
+      <CorporateHeader />
       <Portfolio />
       <Footer />
     </div>

@@ -1,25 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Phone, Mail, MapPin } from "lucide-react";
 
-export const Footer = () => {
+export const LiveFeedFooter = () => {
   return (
     <footer id="contact" className="bg-primary text-primary-foreground py-12 md:py-16 px-4 md:px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-              Ready to Transform Your Team's Professional Image?
+              Book now for consultation
             </h2>
             <p className="text-base sm:text-lg mb-8 text-primary-foreground/80">
-              Contact us today to schedule your on-site headshot session and give your team the professional edge they deserve.
+              Contact us today to book your date now.
             </p>
             <Button 
               variant="secondary" 
               size="lg" 
               className="w-full sm:w-auto"
-              onClick={() => window.open('https://wa.me/60127704714?text=Hi%2C%20I%27m%20interested%20in%20booking%20a%20session%20with%20Ainan%20Media%20Sdn%20Bhd.', '_blank')}
+              onClick={() => window.open('https://wa.me/60136390429?text=Hi%2C%20I%27m%20interested%20in%20booking%20a%20session%20with%20Ainan%20Media%20Sdn%20Bhd.', '_blank')}
             >
-              Book Your Session
+              Contact Us
             </Button>
           </div>
 
@@ -30,7 +30,7 @@ export const Footer = () => {
               </div>
               <div>
                 <div className="font-semibold text-sm md:text-base">Call Us</div>
-                <div className="text-primary-foreground/80 text-sm md:text-base">+60 12-770 4714</div>
+                <div className="text-primary-foreground/80 text-sm md:text-base">+60 13-639 0429</div>
               </div>
             </div>
 
@@ -50,7 +50,7 @@ export const Footer = () => {
               </div>
               <div>
                 <div className="font-semibold text-sm md:text-base">Service Area</div>
-                <div className="text-primary-foreground/80 text-sm md:text-base">Kuala Lumpur & Selangor</div>
+                <div className="text-primary-foreground/80 text-sm md:text-base">All Around Malaysia</div>
               </div>
             </div>
           </div>

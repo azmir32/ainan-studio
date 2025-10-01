@@ -4,10 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import MobileTabBar from "@/components/ui/mobile-tabbar";
-import { FloatingButton } from "@/components/ui/floating-button";
+import SmartMobileTabBar from "@/components/ui/SmartMobileTabBar";
 import { SEOHead } from "@/components/seo/SEOHead";
-import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
 import { 
   PAGE_SEO_DATA, 
   generateLocalBusinessSchema, 
@@ -50,9 +48,6 @@ const SEOWrapper: React.FC<{
   return (
     <>
       <SEOHead seoData={seoData} structuredData={allStructuredData} />
-      <div className="container mx-auto px-4 py-2">
-        <Breadcrumbs />
-      </div>
       {children}
     </>
   );
@@ -120,8 +115,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-        <MobileTabBar />
-        <FloatingButton />
+        <SmartMobileTabBar />
       </HashRouter>
     </TooltipProvider>
   </QueryClientProvider>

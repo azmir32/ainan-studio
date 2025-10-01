@@ -1,4 +1,4 @@
-import { Header } from "@/components/Header";
+import { CorporateHeader } from "@/components/CorporateHeader";
 import { Hero } from "@/components/Hero";
 import { Gallery } from "@/components/Gallery";
 import { PricingSection } from "@/components/PricingSection";
@@ -9,7 +9,7 @@ import { Trusted } from "@/components/Trusted";
 const Index = () => {
   return (
     <div className="min-h-screen pb-tabbar-safe">
-      <Header />
+      <CorporateHeader />
       <Hero />
       <Gallery />
       <PricingSection />

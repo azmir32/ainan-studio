@@ -64,7 +64,7 @@ const LiveFeedMasonryTile = ({
   const getEmbedUrl = (videoUrl: string) => {
     const videoId = getYouTubeVideoId(videoUrl);
     if (!videoId) return null;
-    return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=1&showinfo=0&rel=0`;
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&fs=0&cc_load_policy=0&disablekb=1&enablejsapi=0&origin=${window.location.origin}`;
   };
 
   return (
@@ -85,21 +85,32 @@ const LiveFeedMasonryTile = ({
               <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
-          <iframe
-            src={getEmbedUrl(item.videoUrl) || ''}
-            title={item.title}
-            className="w-full h-full rounded-t-lg transition-all duration-700 group-hover:scale-105 will-change-transform"
-            style={{ 
-              opacity: loaded ? 1 : 0,
-              transform: loaded ? 'scale(1)' : 'scale(1.05)',
-              transition: 'all 0.3s ease-in-out',
-              display: loaded ? 'block' : 'none'
-            }}
-            onLoad={handleVideoLoad}
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
+          <div className="relative w-full h-full">
+            <iframe
+              src={getEmbedUrl(item.videoUrl) || ''}
+              title={item.title}
+              className="w-full h-full rounded-t-lg transition-all duration-700 group-hover:scale-105 will-change-transform"
+              style={{ 
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'scale(1)' : 'scale(1.05)',
+                transition: 'all 0.3s ease-in-out',
+                display: loaded ? 'block' : 'none'
+              }}
+              onLoad={handleVideoLoad}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+            {/* Overlay to hide YouTube branding */}
+            <div 
+              className="absolute bottom-0 right-0 w-24 h-8 bg-black pointer-events-none z-10"
+              style={{ 
+                background: 'linear-gradient(135deg, transparent 0%, transparent 70%, rgba(0,0,0,0.8) 100%)',
+                opacity: loaded ? 1 : 0,
+                transition: 'opacity 0.3s ease-in-out'
+              }}
+            />
+          </div>
         </div>
       ) : (
         <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-t-lg" style={{ aspectRatio: '16/9' }}>
@@ -109,14 +120,6 @@ const LiveFeedMasonryTile = ({
         </div>
       )}
 
-      {/* Live Feed Badge */}
-      {loaded && item.videoUrl && (
-        <div className="absolute top-4 left-4 z-10">
-          <div className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-            {item.category}
-          </div>
-        </div>
-      )}
 
       {/* Content area */}
       <div className="p-6">
