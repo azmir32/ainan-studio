@@ -1,6 +1,6 @@
 import { Header } from "@/components/Header";
 import { LiveFeedHero } from "@/components/LiveFeedHero";
-import { Gallery } from "@/components/Gallery";
+import { LiveFeedPortfolio } from "@/components/LiveFeedPortfolio";
 import { PricingSection } from "@/components/PricingSection";
 import { Footer } from "@/components/Footer";
 import { Testimonials } from "@/components/Testimonials";
@@ -11,7 +11,7 @@ const LiveFeed = () => {
     <div className="min-h-screen pb-tabbar-safe">
       <Header />
       <LiveFeedHero />
-      <Gallery />
+      <LiveFeedPortfolio />
       <PricingSection />
       <Testimonials />
       <Trusted />

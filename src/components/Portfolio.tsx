@@ -1,24 +1,32 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Folder, Images, Eye, ArrowRight, ArrowLeft } from "lucide-react";
 
-// Import images directly
-import image1 from "@/assets/imagesCarousel/20191208-LAN_0281.webp";
-import image2 from "@/assets/imagesCarousel/AIN00523.webp";
-import image3 from "@/assets/imagesCarousel/AIN00718.webp";
-import image4 from "@/assets/imagesCarousel/Amin-Rashidi-Studio-664.webp";
-import image5 from "@/assets/imagesCarousel/DSC_3411.webp";
-import image6 from "@/assets/imagesCarousel/FKP03731.webp";
-import image7 from "@/assets/imagesCarousel/FKP03833.webp";
-import image8 from "@/assets/imagesCarousel/FKP03935.webp";
-import image9 from "@/assets/imagesCarousel/0FK_1526.webp";
-import image10 from "@/assets/imagesCarousel/0FK_0696.webp";
+// Import corporate image albums
+import CyncoImages from "@/assets/coporate-image/Cynco.io";
+import AmranImages from "@/assets/coporate-image/Amran";
+import BNIKarismaImages from "@/assets/coporate-image/BNI Karisma";
+import DrAdamImages from "@/assets/coporate-image/Dr Adam Zubir Photoshoot";
+import HazliImages from "@/assets/coporate-image/Hazli Johar Office Photoshoot";
+import FarhanaImages from "@/assets/coporate-image/Jul -24 FREE Farhana Headshot";
+import NabilahImages from "@/assets/coporate-image/Nabilah Photoshoot";
+
+export interface Album {
+  id: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  images: string[];
+  imageCount: number;
+  category: string;
+}
 
 const PortfolioMasonryTile = ({
-  item,
+  album,
   index,
   onOpen,
 }: {
-  item: any;
+  album: Album;
   index: number;
   onOpen: () => void;
 }) => {
@@ -44,33 +52,23 @@ const PortfolioMasonryTile = ({
     setLoaded(true);
   };
 
-  // Calculate responsive image sizes based on container width
-  const getResponsiveSrcSet = () => {
-    if (!item.coverUrl) return '';
-    
-    // For masonry, we want images that match the rendered size
-    const sizes = [300, 400, 500, 600, 800];
-    return sizes.map(size => `${item.coverUrl}?w=${size} ${size}w`).join(', ');
-  };
-
-  const getSizes = () => {
-    // Responsive sizes that match our masonry column widths
-    return '(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, (max-width: 1280px) 25vw, 300px';
-  };
+  // Simplified image loading without srcset for now
+  // TODO: Implement proper image optimization later
 
   return (
     <div
       ref={tileRef}
-      className="group relative overflow-hidden bg-white shadow-soft hover:shadow-elegant transition-all duration-700 ease-out transform-gpu hover:scale-[1.02] hover:z-10 break-inside-avoid mb-6 rounded-lg"
+      className="group relative overflow-hidden bg-black/5 backdrop-blur-sm border border-white/10 transition-all duration-700 ease-out transform-gpu hover:scale-[1.02] hover:z-10 break-inside-avoid mb-6"
       style={{
+        borderRadius: index % 3 === 0 ? "2rem 0.5rem 2rem 0.5rem" : index % 2 === 0 ? "0.5rem 2rem 0.5rem 2rem" : "1rem",
         transform: isVisible ? "translateY(0)" : "translateY(2rem)",
         opacity: isVisible ? 1 : 0,
         transition: "all 0.8s cubic-bezier(0.4, 0, 0.2, 1)",
         transitionDelay: `${index * 100}ms`,
       }}
     >
-      {item.coverUrl ? (
-        <button type="button" className="block w-full group" onClick={onOpen} aria-label={`Open ${item.title}`}>
+      {album.coverImage ? (
+        <button type="button" className="block w-full group" onClick={onOpen} aria-label={`Open ${album.title} album`}>
           {!loaded && (
             <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
               <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
@@ -78,13 +76,11 @@ const PortfolioMasonryTile = ({
           )}
           <img
             ref={imgRef}
-            src={item.coverUrl}
-            srcSet={getResponsiveSrcSet()}
-            sizes={getSizes()}
-            alt={item.title}
+            src={album.coverImage}
+            alt={album.title}
             loading="lazy"
             decoding="async"
-            className="w-full h-auto object-contain transition-all duration-700 group-hover:scale-105 will-change-transform rounded-t-lg"
+            className="w-full h-auto object-cover transition-all duration-700 group-hover:scale-105 will-change-transform"
             style={{ 
               opacity: loaded ? 1 : 0,
               transform: loaded ? 'scale(1)' : 'scale(1.05)',
@@ -93,186 +89,157 @@ const PortfolioMasonryTile = ({
             }}
             onLoad={handleImageLoad}
             onError={(e) => {
-              console.warn('Failed to load image:', item.coverUrl);
+              console.warn('Failed to load image:', album.coverImage);
               (e.currentTarget as HTMLImageElement).style.display = 'none';
             }}
           />
         </button>
       ) : (
-        <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center rounded-t-lg" style={{ aspectRatio: '3/2' }}>
+        <div className="w-full bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-gray-400 opacity-30">
             <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
           </svg>
         </div>
       )}
 
-      {/* Category badge */}
-      {loaded && item.coverUrl && (
-        <div className="absolute top-4 left-4 z-10">
-          <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-            {item.category}
-          </div>
-        </div>
-      )}
+      {/* Overlays - only show when image is loaded */}
+      {loaded && album.coverImage && (
+        <>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-orange-500/10 mix-blend-overlay pointer-events-none" />
 
-      {/* Content area */}
-      <div className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2">
-          {item.title}
-        </h3>
-        <p className="text-gray-600 text-sm leading-relaxed">
-          {item.description}
-        </p>
-      </div>
+          {/* Album Badge */}
+          <div className="absolute top-4 left-4 z-10">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-medium transform transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
+              <Folder className="w-3 h-3" />
+              <span>{album.imageCount} photos</span>
+            </div>
+          </div>
+
+          {/* Icons */}
+          <div className="absolute top-4 right-4 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <Images className="w-4 h-4" />
+            </div>
+            <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+              <Eye className="w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none">
+            <div className="transform transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+              <h3 className="text-white font-bold mb-2 drop-shadow-lg text-lg">
+                {album.title}
+              </h3>
+              <p className="text-white/80 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                {album.description}
+              </p>
+              <button
+                type="button"
+                className="inline-flex items-center gap-2 text-white/90 text-sm font-medium opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:text-white pointer-events-auto"
+                onClick={onOpen}
+              >
+                <span>View Album</span>
+                <ArrowRight className="w-4 h-4 transition-transform md:group-hover:translate-x-1" />
+              </button>
+            </div>
+          </div>
+
+          {/* Decorative corners */}
+          <div className="absolute top-0 left-0 w-12 h-12 sm:w-16 sm:h-16 border-l-2 border-t-2 border-white/20 opacity-30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+          <div className="absolute bottom-0 right-0 w-12 h-12 sm:w-16 sm:h-16 border-r-2 border-b-2 border-white/20 opacity-30 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        </>
+      )}
     </div>
   );
 };
 
 export const Portfolio = () => {
   
-  // Static portfolio data - no backend needed
-  const staticPortfolioData = [
-    {
-      id: "1",
-      title: "Tech Conference Live Stream",
-      description: "Multi-camera setup for 1,000+ attendees with real-time streaming and interactive Q&A sessions.",
-      category: "Livefeed",
-      coverUrl: image10, // 0FK_0696.webp
-      photos: [
-        image10, // 0FK_0696.webp
-        image2,  // AIN00523.webp
-        image6   // FKP03731.webp
-      ]
-    },
-    {
-      id: "2",
-      title: "Corporate Headshot Session",
-      description: "Professional headshots for 50+ executives in a single day, maintaining consistent quality across all team members.",
-      category: "Corporate",
-      coverUrl: image2, // AIN00523.webp
-      photos: [
-        image2, // AIN00523.webp
-        image3, // AIN00718.webp
-        image5  // DSC_3411.webp
-      ]
-    },
-    {
-      id: "3",
-      title: "Wedding Live Coverage",
-      description: "Complete ceremony and reception with cinematic highlights, capturing every precious moment of the special day.",
-      category: "Weddings",
-      coverUrl: image6, // FKP03731.webp
-      photos: [
-        image6, // FKP03731.webp
-        image7, // FKP03833.webp
-        image8  // FKP03935.webp
-      ]
-    },
-    {
-      id: "4",
-      title: "Product Launch Event",
-      description: "High-end product photography and live streaming for brand launch, reaching global audience in real-time.",
-      category: "Events",
-      coverUrl: image3, // AIN00718.webp
-      photos: [
-        image3, // AIN00718.webp
-        image9, // 0FK_1526.webp
-        image2  // AIN00523.webp
-      ]
-    },
-    {
-      id: "5",
-      title: "Corporate Training Session",
-      description: "Multi-location training session with interactive Q&A, ensuring seamless knowledge transfer across teams.",
-      category: "Livefeed",
-      coverUrl: image5, // DSC_3411.webp
-      photos: [
-        image5, // DSC_3411.webp
-        image6, // FKP03731.webp
-        image10 // 0FK_0696.webp
-      ]
-    },
-    {
-      id: "6",
-      title: "Award Ceremony Coverage",
-      description: "Red carpet photography and live award ceremony streaming, capturing the glamour and excitement of the event.",
-      category: "Events",
-      coverUrl: image7, // FKP03833.webp
-      photos: [
-        image7, // FKP03833.webp
-        image8, // FKP03935.webp
-        image3  // AIN00718.webp
-      ]
-    },
-
-    {
-      id: "8",
-      title: "Team Building Event",
-      description: "Dynamic coverage of corporate team building activities, showcasing company culture and employee engagement.",
-      category: "Corporate",
-      coverUrl: image9, // 0FK_1526.webp
-      photos: [
-        image9, // 0FK_1526.webp
-        image6, // FKP03731.webp
-        image3  // AIN00718.webp
-      ]
-    },
-    {
-      id: "9",
-      title: "Intimate Wedding Ceremony",
-      description: "Breathtaking coverage of intimate wedding ceremonies, focusing on emotional moments and personal touches.",
-      category: "Weddings",
-      coverUrl: image2, // AIN00523.webp
-      photos: [
-        image2, // AIN00523.webp
-        image7, // FKP03833.webp
-        image10 // 0FK_0696.webp
-      ]
-    },
-
-    {
-      id: "11",
-      title: "Corporate Event Photography",
-      description: "Comprehensive coverage of corporate events, conferences, and business meetings with professional documentation.",
-      category: "Corporate",
-      coverUrl: image1, // 20191208-LAN_0281.webp
-      photos: [
-        image1, // 20191208-LAN_0281.webp
-        image3, // AIN00718.webp
-        image5  // DSC_3411.webp
-      ]
-    }
-  ];
-
-  const items = useMemo(
-    () => {
-      return staticPortfolioData.map((i: any) => ({
-        id: i.id,
-        title: i.title,
-        description: i.description,
-        category: i.category,
-        coverUrl: i.coverUrl,
-        photos: i.photos
-      }));
-    },
-    []
-  );
+  // Create albums from corporate image folders
+  const albums = useMemo<Album[]>(() => {
+    return [
+      {
+        id: "cynco",
+        title: "Cynco.io Corporate Photography",
+        description: "Comprehensive corporate photography session for Cynco.io, showcasing professional headshots and office environment",
+        coverImage: `/src/assets/coporate-image/Cynco.io/${CyncoImages[0]}`,
+        images: CyncoImages.map(img => `/src/assets/coporate-image/Cynco.io/${img}`),
+        imageCount: CyncoImages.length,
+        category: "Corporate"
+      },
+      {
+        id: "amran",
+        title: "Amran Professional Headshots",
+        description: "Professional headshot session featuring high-quality corporate portraits",
+        coverImage: `/src/assets/coporate-image/Amran/${AmranImages[0]}`,
+        images: AmranImages.map(img => `/src/assets/coporate-image/Amran/${img}`),
+        imageCount: AmranImages.length,
+        category: "Corporate"
+      },
+      {
+        id: "bni-karisma",
+        title: "BNI Karisma Event Photography",
+        description: "Complete coverage of BNI Karisma corporate event with professional photography",
+        coverImage: `/src/assets/coporate-image/BNI Karisma/${BNIKarismaImages[0]}`,
+        images: BNIKarismaImages.map(img => `/src/assets/coporate-image/BNI Karisma/${img}`),
+        imageCount: BNIKarismaImages.length,
+        category: "Events"
+      },
+      {
+        id: "dr-adam",
+        title: "Dr Adam Zubir Photoshoot",
+        description: "Professional photography session for Dr Adam Zubir with corporate and portrait shots",
+        coverImage: `/src/assets/coporate-image/Dr Adam Zubir Photoshoot/${DrAdamImages[0]}`,
+        images: DrAdamImages.map(img => `/src/assets/coporate-image/Dr Adam Zubir Photoshoot/${img}`),
+        imageCount: DrAdamImages.length,
+        category: "Corporate"
+      },
+      {
+        id: "hazli",
+        title: "Hazli Johar Office Photoshoot",
+        description: "Corporate office photography session for Hazli Johar with professional headshots",
+        coverImage: `/src/assets/coporate-image/Hazli Johar Office Photoshoot/${HazliImages[0]}`,
+        images: HazliImages.map(img => `/src/assets/coporate-image/Hazli Johar Office Photoshoot/${img}`),
+        imageCount: HazliImages.length,
+        category: "Corporate"
+      },
+      {
+        id: "farhana",
+        title: "Farhana Headshot Session",
+        description: "Professional headshot photography session for Farhana",
+        coverImage: `/src/assets/coporate-image/Jul -24 FREE Farhana Headshot/${FarhanaImages[0]}`,
+        images: FarhanaImages.map(img => `/src/assets/coporate-image/Jul -24 FREE Farhana Headshot/${img}`),
+        imageCount: FarhanaImages.length,
+        category: "Corporate"
+      },
+      {
+        id: "nabilah",
+        title: "Nabilah Photoshoot",
+        description: "Professional photography session for Nabilah with creative and corporate shots",
+        coverImage: `/src/assets/coporate-image/Nabilah Photoshoot/${NabilahImages[0]}`,
+        images: NabilahImages.map(img => `/src/assets/coporate-image/Nabilah Photoshoot/${img}`),
+        imageCount: NabilahImages.length,
+        category: "Corporate"
+      }
+    ];
+  }, []);
 
   // Lightbox state
-  const [activeAlbumId, setActiveAlbumId] = useState<string | null>(null);
+  const [activeAlbum, setActiveAlbum] = useState<Album | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number>(0);
-  const isLightboxOpen = activeAlbumId !== null;
+  const isLightboxOpen = activeAlbum !== null;
   
   // Get photos for the active album
-  const activeAlbum = items.find(item => item.id === activeAlbumId);
-  const photos = activeAlbum?.photos || [];
+  const photos = activeAlbum?.images || [];
 
   // Keyboard navigation for lightbox
   useEffect(() => {
     if (!isLightboxOpen || photos.length === 0) return;
     
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActiveAlbumId(null);
+      if (e.key === "Escape") setActiveAlbum(null);
       if (e.key === "ArrowRight")
         setLightboxIndex((i) => (i + 1) % photos.length);
       if (e.key === "ArrowLeft")
@@ -284,91 +251,95 @@ export const Portfolio = () => {
   }, [isLightboxOpen, photos.length]);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header Section */}
-      <section className="bg-gray-800 py-20 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+    // Main section container with padding and background styling
+    <section className="py-20 px-6 bg-[radial-gradient(1200px_800px_at_50%_-10%,hsl(var(--accent)/0.12),transparent_60%)]">
+      {/* Centered container with max width for better readability */}
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Section header with title and description */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Our Portfolio
-          </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Showcasing our expertise in livestreaming, event coverage, and professional photography
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Showcasing our expertise in delivering exceptional photography services across Malaysia
           </p>
         </div>
-      </section>
 
-      {/* Portfolio Section */}
-      <section className="py-12 px-6">
-        <div className="max-w-7xl mx-auto">
-          {/* Masonry layout using CSS columns */}
-          <div 
-            className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6"
-            style={{
-              columnFill: 'balance',
-              columnGap: '1.5rem'
-            }}
-          >
-            {items.map((item, index) => (
-              <PortfolioMasonryTile
-                key={item.id}
-                item={item}
-                index={index}
-                onOpen={() => {
-                  setActiveAlbumId(item.id);
-                  setLightboxIndex(0);
-                }}
-              />
-            ))}
-          </div>
+        {/* Masonry layout using CSS columns */}
+        <div 
+          className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-6 mb-16"
+          style={{
+            columnFill: 'balance',
+            columnGap: '1.5rem'
+          }}
+        >
+          {albums.map((album, index) => (
+            <PortfolioMasonryTile
+              key={album.id}
+              album={album}
+              index={index}
+              onOpen={() => {
+                setActiveAlbum(album);
+                setLightboxIndex(0);
+              }}
+            />
+          ))}
         </div>
-      </section>
+      </div>
 
       {/* Album Lightbox */}
-      <Dialog open={isLightboxOpen} onOpenChange={(open) => setActiveAlbumId(open ? activeAlbumId : null)}>
-        <DialogContent className="max-w-5xl">
-          <div className="space-y-3">
-            <DialogHeader>
-              <DialogTitle>
-                {activeAlbum?.title || "Album"}
-              </DialogTitle>
-              <DialogDescription>
-                {activeAlbum?.description || ""}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="w-full max-h-[80vh] flex items-center justify-center bg-black/5 rounded">
-              {photos.length === 0 ? (
-                <div className="p-16 text-sm text-muted-foreground">No photos in this album yet.</div>
-              ) : (
-                <img
-                  src={photos[lightboxIndex]}
-                  srcSet={`${photos[lightboxIndex]} 1600w`}
-                  sizes="100vw"
-                  alt={activeAlbum?.title || ""}
-                  className="max-h-[78vh] w-auto object-contain cursor-pointer"
-                  onClick={() => setLightboxIndex((i) => (i + 1) % photos.length)}
-                />
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                {photos.length > 0 ? `${lightboxIndex + 1} / ${photos.length} — Use ← → or click image to navigate` : ""}
+      <Dialog open={isLightboxOpen} onOpenChange={(open) => {
+        if (!open) {
+          setActiveAlbum(null);
+          setLightboxIndex(0);
+        }
+      }}>
+        <DialogContent className="p-0 sm:max-w-5xl bg-black">
+          <DialogTitle className="sr-only">
+            {activeAlbum ? `${activeAlbum.title} - Image ${lightboxIndex + 1} of ${activeAlbum.images.length}` : 'Album Viewer'}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {activeAlbum ? activeAlbum.description : 'Album image viewer'}
+          </DialogDescription>
+          {activeAlbum && (
+            <div className="relative">
+              <img
+                src={activeAlbum.images[lightboxIndex]}
+                alt={`${activeAlbum.title} - Image ${lightboxIndex + 1}`}
+                className="w-full h-auto object-contain max-h-[80vh]"
+                loading="eager"
+                style={{ 
+                  maxWidth: '100%',
+                  height: 'auto'
+                }}
+              />
+              {/* Prev/Next controls */}
+              <button
+                aria-label="Previous image"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white grid place-items-center"
+                onClick={() => setLightboxIndex((i) => (i + activeAlbum.images.length - 1) % activeAlbum.images.length)}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+              <button
+                aria-label="Next image"
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white grid place-items-center"
+                onClick={() => setLightboxIndex((i) => (i + 1) % activeAlbum.images.length)}
+              >
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              {/* Album info and image counter */}
+              <div className="absolute bottom-3 left-4 right-4 text-white/90 text-sm">
+                <div className="flex justify-between items-center">
+                  <span>{activeAlbum.title}</span>
+                  <span>{lightboxIndex + 1} / {activeAlbum.images.length}</span>
+                </div>
               </div>
-              {photos.length > 0 && (
-                <a
-                  className="text-sm underline"
-                  href={photos[lightboxIndex]}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Open original
-                </a>
-              )}
             </div>
-          </div>
+          )}
         </DialogContent>
       </Dialog>
-    </div>
+    </section>
   );
 };

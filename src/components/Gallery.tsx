@@ -1,19 +1,25 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Play, Camera, Zap, Eye, Heart, ArrowRight, ArrowLeft } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Play, Camera, Zap, Eye, Heart, ArrowRight, ArrowLeft, Folder, Images } from "lucide-react";
 import { ToPortfolioButton } from "@/components/ui/to-portfolio-button";
 
-// Import images directly
-import image1 from "@/assets/imagesCarousel/20191208-LAN_0281.webp";
-import image2 from "@/assets/imagesCarousel/AIN00523.webp";
-import image3 from "@/assets/imagesCarousel/AIN00718.webp";
-import image4 from "@/assets/imagesCarousel/Amin-Rashidi-Studio-664.webp";
-import image5 from "@/assets/imagesCarousel/DSC_3411.webp";
-import image6 from "@/assets/imagesCarousel/FKP03731.webp";
-import image7 from "@/assets/imagesCarousel/FKP03833.webp";
-import image8 from "@/assets/imagesCarousel/FKP03935.webp";
-import image9 from "@/assets/imagesCarousel/0FK_1526.webp";
-import image10 from "@/assets/imagesCarousel/0FK_0696.webp";
+// Import corporate image albums
+import CyncoImages from "@/assets/coporate-image/Cynco.io";
+import AmranImages from "@/assets/coporate-image/Amran";
+import BNIKarismaImages from "@/assets/coporate-image/BNI Karisma";
+import DrAdamImages from "@/assets/coporate-image/Dr Adam Zubir Photoshoot";
+import HazliImages from "@/assets/coporate-image/Hazli Johar Office Photoshoot";
+import FarhanaImages from "@/assets/coporate-image/Jul -24 FREE Farhana Headshot";
+import NabilahImages from "@/assets/coporate-image/Nabilah Photoshoot";
+
+export interface Album {
+  id: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  images: string[];
+  imageCount: number;
+}
 
 export interface GalleryItem {
   title: string;
@@ -21,20 +27,24 @@ export interface GalleryItem {
   imageUrl?: string;
 }
 
-const MasonryTile = ({
-  work,
+const AlbumTile = ({
+  album,
   index,
   onOpen,
 }: {
-  work: GalleryItem;
+  album: Album;
   index: number;
   onOpen: () => void;
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const [imageDimensions, setImageDimensions] = useState<{width: number, height: number} | null>(null);
   const tileRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const retryTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -49,28 +59,98 @@ const MasonryTile = ({
     return () => observer.disconnect();
   }, [index]);
 
+  // Set loading timeout to prevent infinite loading
+  useEffect(() => {
+    if (album.coverImage && !loaded && !imageError) {
+      loadingTimeoutRef.current = setTimeout(() => {
+        console.warn(`Image loading timeout: ${album.coverImage}`);
+        setImageError(true);
+        setLoaded(true);
+      }, 10000); // 10 second timeout
+    }
+    
+    return () => {
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, [album.coverImage, loaded, imageError]);
+
   const handleImageLoad = () => {
+    // Clear loading timeout
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
     setLoaded(true);
+    setImageError(false);
+    setRetryCount(0);
     if (imgRef.current) {
       const { naturalWidth, naturalHeight } = imgRef.current;
       setImageDimensions({ width: naturalWidth, height: naturalHeight });
     }
   };
 
-  // Calculate responsive image sizes based on container width
-  const getResponsiveSrcSet = () => {
-    if (!work.imageUrl) return '';
+  const handleImageError = () => {
+    // Clear loading timeout
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
     
-    // For masonry, we want images that match the rendered size
-    // Base sizes: 300px for mobile, 400px for tablet, 500px for desktop
-    const sizes = [300, 400, 500, 600, 800];
-    return sizes.map(size => `${work.imageUrl}?w=${size} ${size}w`).join(', ');
+    console.warn(`Failed to load image: ${album.coverImage} (attempt ${retryCount + 1})`);
+    
+    if (retryCount < 2) { // Reduced from 3 to 2 retries for faster failure
+      // Auto-retry with shorter delays: 500ms, 1s
+      const delay = retryCount === 0 ? 500 : 1000;
+      retryTimeoutRef.current = setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+        setImageError(false);
+        setLoaded(false);
+        // Force image reload by updating src
+        if (imgRef.current) {
+          const currentSrc = imgRef.current.src;
+          imgRef.current.src = '';
+          imgRef.current.src = currentSrc;
+        }
+      }, delay);
+    } else {
+      // Max retries reached, show error state
+      setImageError(true);
+      setLoaded(true);
+    }
   };
 
-  const getSizes = () => {
-    // Responsive sizes that match our masonry column widths
-    return '(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, (max-width: 1280px) 25vw, 300px';
+  const handleManualRetry = () => {
+    if (retryTimeoutRef.current) {
+      clearTimeout(retryTimeoutRef.current);
+    }
+    if (loadingTimeoutRef.current) {
+      clearTimeout(loadingTimeoutRef.current);
+    }
+    setRetryCount(0);
+    setImageError(false);
+    setLoaded(false);
+    // Force image reload
+    if (imgRef.current) {
+      const currentSrc = imgRef.current.src;
+      imgRef.current.src = '';
+      imgRef.current.src = currentSrc;
+    }
   };
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    return () => {
+      if (retryTimeoutRef.current) {
+        clearTimeout(retryTimeoutRef.current);
+      }
+      if (loadingTimeoutRef.current) {
+        clearTimeout(loadingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Simplified image loading without srcset for now
+  // TODO: Implement proper image optimization later
 
   return (
     <div
@@ -84,22 +164,20 @@ const MasonryTile = ({
         transitionDelay: `${index * 100}ms`,
       }}
     >
-      {work.imageUrl ? (
-        <button type="button" className="block w-full group" onClick={onOpen} aria-label={`Open ${work.title}`}>
-          {!loaded && (
+      {album.coverImage ? (
+        <>
+          {!loaded && !imageError && (
             <div className="w-full bg-gradient-to-br from-gray-200 to-gray-300 animate-pulse flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
               <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
             </div>
           )}
           <img
             ref={imgRef}
-            src={work.imageUrl}
-            srcSet={getResponsiveSrcSet()}
-            sizes={getSizes()}
-            alt={work.title}
-            loading="lazy"
+            src={album.coverImage}
+            alt={album.title}
+            loading="eager"
             decoding="async"
-            className="w-full h-auto object-contain transition-all duration-700 group-hover:scale-105 will-change-transform"
+            className="w-full h-auto object-cover transition-all duration-700 group-hover:scale-105 will-change-transform"
             style={{ 
               opacity: loaded ? 1 : 0,
               transform: loaded ? 'scale(1)' : 'scale(1.05)',
@@ -107,12 +185,33 @@ const MasonryTile = ({
               display: loaded ? 'block' : 'none'
             }}
             onLoad={handleImageLoad}
-            onError={(e) => {
-              console.warn('Failed to load image:', work.imageUrl);
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
-            }}
+            onError={handleImageError}
           />
-        </button>
+          {/* Clickable overlay - only when image is loaded */}
+          {loaded && !imageError && (
+            <button 
+              type="button" 
+              className="absolute inset-0 w-full h-full group" 
+              onClick={onOpen} 
+              aria-label={`Open ${album.title} album`}
+            />
+          )}
+        </>
+      ) : imageError ? (
+        <div className="w-full bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
+          <div className="text-center text-red-600 p-4">
+            <svg className="w-12 h-12 mx-auto mb-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <p className="text-sm font-medium mb-2">Failed to load image</p>
+            <button
+              onClick={handleManualRetry}
+              className="text-xs bg-red-600 text-white px-3 py-1 rounded-full hover:bg-red-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
       ) : (
         <div className="w-full bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 flex items-center justify-center" style={{ aspectRatio: '3/2' }}>
           <svg viewBox="0 0 24 24" fill="currentColor" className="w-16 h-16 text-white/20">
@@ -121,26 +220,27 @@ const MasonryTile = ({
         </div>
       )}
 
-      {/* Overlays - only show when image is loaded */}
-      {loaded && work.imageUrl && (
+      {/* Overlays - only show when image is loaded and not in error state */}
+      {loaded && album.coverImage && !imageError && (
         <>
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" />
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-orange-500/10 mix-blend-overlay pointer-events-none" />
 
-          {/* Badge */}
+          {/* Album Badge */}
           <div className="absolute top-4 left-4 z-10">
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white px-3 py-1.5 rounded-full text-xs font-medium transform transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
-              <Play className="w-3 h-3" />
+              <Folder className="w-3 h-3" />
+              <span>{album.imageCount} photos</span>
             </div>
           </div>
 
           {/* Icons */}
           <div className="absolute top-4 right-4 z-10 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
             <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-              <Eye className="w-4 h-4" />
+              <Images className="w-4 h-4" />
             </div>
             <div className="w-8 h-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-              <Heart className="w-4 h-4" />
+              <Eye className="w-4 h-4" />
             </div>
           </div>
 
@@ -148,17 +248,17 @@ const MasonryTile = ({
           <div className="absolute inset-0 flex flex-col justify-end p-6 pointer-events-none">
             <div className="transform transition-all duration-500 translate-y-2 group-hover:translate-y-0">
               <h3 className="text-white font-bold mb-2 drop-shadow-lg text-lg">
-                {work.title}
+                {album.title}
               </h3>
               <p className="text-white/80 text-sm leading-relaxed mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                {work.description}
+                {album.description}
               </p>
               <button
                 type="button"
                 className="inline-flex items-center gap-2 text-white/90 text-sm font-medium opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all duration-300 hover:text-white pointer-events-auto"
                 onClick={onOpen}
               >
-                <span>View More</span>
+                <span>View Album</span>
                 <ArrowRight className="w-4 h-4 transition-transform md:group-hover:translate-x-1" />
               </button>
             </div>
@@ -174,69 +274,69 @@ const MasonryTile = ({
 };
 
 export const Gallery = () => {
-  const iconMap: Record<string, any> = { Play, Camera, Zap };
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [currentAlbum, setCurrentAlbum] = useState<Album | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
   
-  // Static gallery data - no backend needed
-  const staticGalleryData = [
-    { 
-      title: "Tech Conference Live Stream", 
-      description: "Multi-camera setup for 1,000+ attendees with real-time streaming", 
-      imageUrl: image1 // 20191208-LAN_0281.webp
-    },
-    { 
-      title: "Corporate Headshot Session", 
-      description: "Professional headshots for 50+ executives in a single day", 
-      imageUrl: image2 // AIN00523.webp
-    },
-    { 
-      title: "Wedding Live Coverage", 
-      description: "Complete ceremony and reception with cinematic highlights", 
-      imageUrl: image3 // AIN00718.webp
-    },
-    { 
-      title: "Product Launch Event", 
-      description: "High-end product photography and live streaming for brand launch", 
-      imageUrl: image4 // Amin-Rashidi-Studio-664.webp
-    },
-    { 
-      title: "Corporate Training Session", 
-      description: "Multi-location training session with interactive Q&A", 
-      imageUrl: image5 // DSC_3411.webp
-    },
-    { 
-      title: "Award Ceremony Coverage", 
-      description: "Red carpet photography and live award ceremony streaming", 
-      imageUrl: image6 // FKP03731.webp
-    },
-    { 
-      title: "Team Building Event", 
-      description: "Dynamic coverage of corporate team building activities", 
-      imageUrl: image7 // FKP03833.webp
-    },
-    { 
-      title: "Intimate Wedding Ceremony", 
-      description: "Breathtaking coverage of intimate wedding ceremonies", 
-      imageUrl: image8 // FKP03935.webp
-    },
-    { 
-      title: "Corporate Event Photography", 
-      description: "Comprehensive coverage of corporate events, conferences, and business meetings", 
-      imageUrl: image9 // 0FK_1526.webp
-    },
-    { 
-      title: "Corporate Event Photography", 
-      description: "Comprehensive coverage of corporate events, conferences, and business meetings", 
-      imageUrl: image10 // 0FK_0696.webp
-    },
-  ];
-
-  const items = useMemo<GalleryItem[]>(() => {
-    return staticGalleryData.map((i: any) => ({
-      title: i.title,
-      description: i.description,
-      imageUrl: i.imageUrl,
-    }));
+  // Create albums from corporate image folders
+  const albums = useMemo<Album[]>(() => {
+    return [
+      {
+        id: "cynco",
+        title: "Cynco.io Corporate Photography",
+        description: "Comprehensive corporate photography session for Cynco.io, showcasing professional headshots and office environment",
+        coverImage: `/src/assets/coporate-image/Cynco.io/${CyncoImages[0]}`,
+        images: CyncoImages.map(img => `/src/assets/coporate-image/Cynco.io/${img}`),
+        imageCount: CyncoImages.length
+      },
+      {
+        id: "amran",
+        title: "Amran Professional Headshots",
+        description: "Professional headshot session featuring high-quality corporate portraits",
+        coverImage: `/src/assets/coporate-image/Amran/${AmranImages[0]}`,
+        images: AmranImages.map(img => `/src/assets/coporate-image/Amran/${img}`),
+        imageCount: AmranImages.length
+      },
+      {
+        id: "bni-karisma",
+        title: "BNI Karisma Event Photography",
+        description: "Complete coverage of BNI Karisma corporate event with professional photography",
+        coverImage: `/src/assets/coporate-image/BNI Karisma/${BNIKarismaImages[0]}`,
+        images: BNIKarismaImages.map(img => `/src/assets/coporate-image/BNI Karisma/${img}`),
+        imageCount: BNIKarismaImages.length
+      },
+      {
+        id: "dr-adam",
+        title: "Dr Adam Zubir Photoshoot",
+        description: "Professional photography session for Dr Adam Zubir with corporate and portrait shots",
+        coverImage: `/src/assets/coporate-image/Dr Adam Zubir Photoshoot/${DrAdamImages[0]}`,
+        images: DrAdamImages.map(img => `/src/assets/coporate-image/Dr Adam Zubir Photoshoot/${img}`),
+        imageCount: DrAdamImages.length
+      },
+      {
+        id: "hazli",
+        title: "Hazli Johar Office Photoshoot",
+        description: "Corporate office photography session for Hazli Johar with professional headshots",
+        coverImage: `/src/assets/coporate-image/Hazli Johar Office Photoshoot/${HazliImages[0]}`,
+        images: HazliImages.map(img => `/src/assets/coporate-image/Hazli Johar Office Photoshoot/${img}`),
+        imageCount: HazliImages.length
+      },
+      {
+        id: "farhana",
+        title: "Farhana Headshot Session",
+        description: "Professional headshot photography session for Farhana",
+        coverImage: `/src/assets/coporate-image/Jul -24 FREE Farhana Headshot/${FarhanaImages[0]}`,
+        images: FarhanaImages.map(img => `/src/assets/coporate-image/Jul -24 FREE Farhana Headshot/${img}`),
+        imageCount: FarhanaImages.length
+      },
+      {
+        id: "nabilah",
+        title: "Nabilah Photoshoot",
+        description: "Professional photography session for Nabilah with creative and corporate shots",
+        coverImage: `/src/assets/coporate-image/Nabilah Photoshoot/${NabilahImages[0]}`,
+        images: NabilahImages.map(img => `/src/assets/coporate-image/Nabilah Photoshoot/${img}`),
+        imageCount: NabilahImages.length
+      }
+    ];
   }, []);
 
   return (
@@ -263,12 +363,15 @@ export const Gallery = () => {
             columnGap: '1.5rem'
           }}
         >
-          {items.map((work, index) => (
-            <MasonryTile
-              key={index}
-              work={work}
+          {albums.map((album, index) => (
+            <AlbumTile
+              key={album.id}
+              album={album}
               index={index}
-              onOpen={() => setCurrentIndex(index)}
+              onOpen={() => {
+                setCurrentAlbum(album);
+                setCurrentImageIndex(0);
+              }}
             />
           ))}
         </div>
@@ -279,28 +382,37 @@ export const Gallery = () => {
         </div>
       </div>
 
-      {/* Lightbox dialog with navigation */}
-      <Dialog open={currentIndex !== null} onOpenChange={(open) => setCurrentIndex(open ? (currentIndex ?? 0) : null)}>
+      {/* Album Lightbox dialog with navigation */}
+      <Dialog open={currentAlbum !== null} onOpenChange={(open) => {
+        if (!open) {
+          setCurrentAlbum(null);
+          setCurrentImageIndex(0);
+        }
+      }}>
         <DialogContent
           className="p-0 sm:max-w-5xl bg-black"
           onKeyDown={(e) => {
-            if (currentIndex === null) return;
+            if (currentAlbum === null) return;
             if (e.key === 'ArrowLeft') {
-              setCurrentIndex((i) => (i === null ? i : (i + items.length - 1) % items.length));
+              setCurrentImageIndex((i) => (i + currentAlbum.images.length - 1) % currentAlbum.images.length);
             }
             if (e.key === 'ArrowRight') {
-              setCurrentIndex((i) => (i === null ? i : (i + 1) % items.length));
+              setCurrentImageIndex((i) => (i + 1) % currentAlbum.images.length);
             }
           }}
           tabIndex={0}
         >
-          {currentIndex !== null && items[currentIndex] && (
+          <DialogTitle className="sr-only">
+            {currentAlbum ? `${currentAlbum.title} - Image ${currentImageIndex + 1} of ${currentAlbum.images.length}` : 'Album Viewer'}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            {currentAlbum ? currentAlbum.description : 'Album image viewer'}
+          </DialogDescription>
+          {currentAlbum && (
             <div className="relative">
               <img
-                src={items[currentIndex].imageUrl || ''}
-                srcSet={`${items[currentIndex].imageUrl}?w=1280 1280w, ${items[currentIndex].imageUrl}?w=1920 1920w`}
-                sizes="(max-width: 1280px) 100vw, 1920px"
-                alt={items[currentIndex].title}
+                src={currentAlbum.images[currentImageIndex]}
+                alt={`${currentAlbum.title} - Image ${currentImageIndex + 1}`}
                 className="w-full h-auto object-contain max-h-[80vh]"
                 loading="eager"
                 style={{ 
@@ -312,20 +424,23 @@ export const Gallery = () => {
               <button
                 aria-label="Previous image"
                 className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white grid place-items-center"
-                onClick={() => setCurrentIndex((i) => (i === null ? i : (i + items.length - 1) % items.length))}
+                onClick={() => setCurrentImageIndex((i) => (i + currentAlbum.images.length - 1) % currentAlbum.images.length)}
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <button
                 aria-label="Next image"
                 className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-white grid place-items-center"
-                onClick={() => setCurrentIndex((i) => (i === null ? i : (i + 1) % items.length))}
+                onClick={() => setCurrentImageIndex((i) => (i + 1) % currentAlbum.images.length)}
               >
                 <ArrowRight className="w-5 h-5" />
               </button>
-              {/* Caption */}
+              {/* Album info and image counter */}
               <div className="absolute bottom-3 left-4 right-4 text-white/90 text-sm">
-                {items[currentIndex].title}
+                <div className="flex justify-between items-center">
+                  <span>{currentAlbum.title}</span>
+                  <span>{currentImageIndex + 1} / {currentAlbum.images.length}</span>
+                </div>
               </div>
             </div>
           )}

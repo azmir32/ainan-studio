@@ -1,9 +1,27 @@
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export const Header = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Determine navigation target based on current page
+  const handlePortfolioClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === "/" || location.pathname === "/#") {
+      // From Index page → go to portfolio page
+      navigate("/portfolio");
+    } else if (location.pathname === "/livefeed") {
+      // From LiveFeed page → go to livefeed portfolio page
+      navigate("/livefeed-portfolio");
+    } else {
+      // Default fallback
+      navigate("/portfolio");
+    }
+  };
+
   return (
     <header className="w-full py-3 md:py-4 px-4 md:px-6 border-b border-border/50 bg-background/95 backdrop-blur-md sticky top-0 z-50 shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -24,13 +42,13 @@ export const Header = () => {
         </div>
         
         <nav className="hidden md:flex items-center space-x-8"> 
-          <Link 
-            to="/portfolio" 
+          <button 
+            onClick={handlePortfolioClick}
             className="text-foreground/80 hover:text-foreground transition-colors duration-200 font-medium relative group"
           >
             Portfolio
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full"></span>
-          </Link>
+          </button>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -54,7 +72,12 @@ export const Header = () => {
                   <SheetTitle className="text-left">Menu</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 flex flex-col gap-3">
-                  <Link to="/portfolio" className="text-base py-2">Portfolio</Link>
+                  <button 
+                    onClick={handlePortfolioClick}
+                    className="text-base py-2 text-left"
+                  >
+                    Portfolio
+                  </button>
                   <Button 
                     variant="premium" 
                     className="mt-4"
