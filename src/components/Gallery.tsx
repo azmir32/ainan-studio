@@ -401,8 +401,6 @@ export const Gallery = () => {
     return albumsData;
   }, []);
 
-  // Calculate loading progress
-  const loadingProgress = totalImages > 0 ? (loadedImages.size / totalImages) * 100 : 0;
 
   return (
     // Main section container with padding and background styling
@@ -418,22 +416,6 @@ export const Gallery = () => {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
             Showcasing our expertise in delivering exceptional photography services across Malaysia
           </p>
-          
-          {/* Loading Progress Indicator */}
-          {loadingProgress < 100 && totalImages > 0 && (
-            <div className="max-w-md mx-auto">
-              <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                <span>Loading gallery...</span>
-                <span>{Math.round(loadingProgress)}%</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                <div 
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 h-full rounded-full transition-all duration-500 ease-out"
-                  style={{ width: `${loadingProgress}%` }}
-                />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Masonry layout using CSS columns */}

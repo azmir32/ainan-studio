@@ -29,8 +29,10 @@ export const Hero = () => {
         </Badge>
 
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 leading-tight drop-shadow-2xl">
-          Professional Photos
-          <span className="block text-accent drop-shadow-2xl">Without the studio</span>
+        Nak gambar professional?
+
+          <span className="text-6xl block text-accent drop-shadow-2xl">Tapi malas ke studio
+          </span>
         </h1>
 
         <h2 className="text-4xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-2xl text-accent">
