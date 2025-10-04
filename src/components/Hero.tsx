@@ -35,11 +35,6 @@ export const Hero = () => {
           </span>
         </h1>
 
-        <h2 className="text-4xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight drop-shadow-2xl text-accent">
-          Skip Travel<br/>
-          Save Time<br/>
-        </h2>
-
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
           <Button
             variant="hero"
