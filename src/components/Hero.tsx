@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Camera, MapPin, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { AssistantChat } from "./ui/assistant-chat";
 import heroImage from "@/assets/heroImage";
 
 
@@ -65,9 +64,6 @@ export const Hero = () => {
           </div>
         </div>
       </div>
-
-      {/* Floating chat assistant */}
-      <AssistantChat />
     </section>
   );
 };

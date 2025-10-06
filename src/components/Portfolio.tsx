@@ -10,6 +10,7 @@ import DrAdamImages from "@/assets/coporate-image/Dr Adam Zubir Photoshoot";
 import HazliImages from "@/assets/coporate-image/Hazli Johar Office Photoshoot";
 import FarhanaImages from "@/assets/coporate-image/Jul -24 FREE Farhana Headshot";
 import NabilahImages from "@/assets/coporate-image/Nabilah Photoshoot";
+import EdlinaImages from "@/assets/coporate-image/Edlina - Total Image Transformation Photoshoot-20251006T220738Z-1-001";
 
 export interface Album {
   id: string;
@@ -222,6 +223,15 @@ export const Portfolio = () => {
         images: NabilahImages.map(img => new URL(`../assets/coporate-image/Nabilah Photoshoot/${img}`, import.meta.url).href),
         imageCount: NabilahImages.length,
         category: "Corporate"
+      },
+      {
+        id: "edlina",
+        title: "Edlina - Total Image Transformation",
+        description: "Complete image transformation photoshoot for Edlina featuring professional portraits and creative shots",
+        coverImage: new URL(`../assets/coporate-image/Edlina - Total Image Transformation Photoshoot-20251006T220738Z-1-001/Edlina - Total Image Transformation Photoshoot/${EdlinaImages[0]}`, import.meta.url).href,
+        images: EdlinaImages.map(img => new URL(`../assets/coporate-image/Edlina - Total Image Transformation Photoshoot-20251006T220738Z-1-001/Edlina - Total Image Transformation Photoshoot/${img}`, import.meta.url).href),
+        imageCount: EdlinaImages.length,
+        category: "Portrait"
       }
     ];
   }, []);

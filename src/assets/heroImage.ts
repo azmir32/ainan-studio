@@ -1,3 +1,3 @@
-import image from './hero-image.webp';
+import image from './Corporate Photography hero picture.webp';
 
 export default image;
